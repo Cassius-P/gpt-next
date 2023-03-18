@@ -1,7 +1,11 @@
+import Container from "@/components/container/Container";
+import Sidebar from "@/components/sidebar/Sidebar";
+
 export default function Home() {
     return (
-      <>
-        <h1 className={'text-xl text-green-400'}>test</h1>
-      </>
+      <div className="flex">
+        <Sidebar/>
+        <Container/>
+      </div>
     )
   }
