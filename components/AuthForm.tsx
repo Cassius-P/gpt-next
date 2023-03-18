@@ -74,8 +74,8 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
             <p tabIndex={0} className="focus:outline-none text-sm mt-4 font-medium leading-none text-gray-500">{subtitle1} 
               <a className="hover:text-gray-500 focus:text-gray-500 focus:outline-none focus:underline hover:underline text-sm font-medium leading-none  text-gray-800 cursor-pointer" onClick={handleOtherAuth}> {subtitle2}</a>
               </p>
-            <button onClick={handleGoogleAuth} aria-label="Continue with google" role="button" className="focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-700 py-3.5 px-4 border rounded-lg border-gray-700 flex items-center w-full mt-10">
-              <Image src="https://tuk-cdn.s3.amazonaws.com/can-uploader/sign_in-svg2.svg" alt="google" />
+            <button onClick={handleGoogleAuth} aria-label="Continue with google" role="button" className="focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-700 py-3.5 px-4 border rounded-lg border-gray-700 flex items-center w-full mt-10 hover:bg-black/5">
+              <Image src="https://tuk-cdn.s3.amazonaws.com/can-uploader/sign_in-svg2.svg" alt="google" width={30} height={30}/>
               <p className="text-base font-medium ml-4 text-gray-700">Continue with Google</p>
             </button>
             
