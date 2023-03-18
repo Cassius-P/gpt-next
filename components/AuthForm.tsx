@@ -3,6 +3,7 @@ import { signInWithGoogle, auth, connectWithEmailAndPassword, sendVerifEmail } f
 import Input from "./forms/Inputs";
 import Button from "./button/Button";
 import { useUI } from "./UIContext";
+import Image from 'next/image'
 
 interface AuthFormProps {
   isSignIn: boolean;
@@ -74,7 +75,7 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
               <a className="hover:text-gray-500 focus:text-gray-500 focus:outline-none focus:underline hover:underline text-sm font-medium leading-none  text-gray-800 cursor-pointer" onClick={handleOtherAuth}> {subtitle2}</a>
               </p>
             <button onClick={handleGoogleAuth} aria-label="Continue with google" role="button" className="focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-700 py-3.5 px-4 border rounded-lg border-gray-700 flex items-center w-full mt-10">
-              <img src="https://tuk-cdn.s3.amazonaws.com/can-uploader/sign_in-svg2.svg" alt="google" />
+              <Image src="https://tuk-cdn.s3.amazonaws.com/can-uploader/sign_in-svg2.svg" alt="google" />
               <p className="text-base font-medium ml-4 text-gray-700">Continue with Google</p>
             </button>
             
