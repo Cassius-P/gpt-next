@@ -1,0 +1,83 @@
+/* ORANGE */
+.btn-orange {
+  @apply bg-orange-500 hover:bg-orange-700 text-white;
+}
+.btn-orange:hover {
+  @apply bg-orange-700;
+}
+.btn-orange:focus {
+  @apply ring-orange-500;
+}
+.btn-orange:active {
+  @apply bg-orange-900;
+}
+.btn-orange:disabled {
+  @apply bg-opacity-50 cursor-not-allowed;
+}
+
+/* BLUE */
+.btn-blue {
+  @apply bg-blue-500 hover:bg-blue-700 text-white;
+}
+.btn-blue:hover {
+  @apply bg-blue-700;
+}
+.btn-blue:focus {
+  @apply ring-blue-500;
+}
+.btn-blue:active {
+  @apply bg-blue-900;
+}
+.btn-blue:disabled {
+  @apply bg-opacity-50 cursor-not-allowed;
+}
+
+/* GREEN */
+.btn-green {
+  @apply bg-green-500 hover:bg-green-700 text-white;
+}
+.btn-green:hover {
+  @apply bg-green-700;
+}
+.btn-green:focus {
+  @apply ring-green-500;
+}
+.btn-green:active {
+  @apply bg-green-900;
+}
+.btn-green:disabled {
+  @apply bg-opacity-50 cursor-not-allowed;
+}
+
+/* YELLOW */
+.btn-yellow {
+  @apply bg-yellow-500 hover:bg-yellow-700 text-white;
+}
+.btn-yellow:hover {
+  @apply bg-yellow-700;
+}
+.btn-yellow:focus {
+  @apply ring-yellow-500;
+}
+.btn-yellow:active {
+  @apply bg-yellow-900;
+}
+.btn-yellow:disabled {
+  @apply bg-opacity-50 cursor-not-allowed;
+}
+
+.btn-red {
+  @apply bg-red-500 hover:bg-red-700 text-white;
+}
+.btn-red:hover {
+  @apply bg-red-700;
+}
+.btn-red:focus {
+  @apply ring-red-500;
+}
+.btn-red:active {
+  @apply bg-red-900;
+}
+.btn-red:disabled {
+  @apply bg-opacity-50 cursor-not-allowed;
+}
