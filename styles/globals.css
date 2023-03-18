@@ -4,6 +4,7 @@
 
 body {
   @apply text-gray-700;
+  @apply h-screen
 }
 
 .path {

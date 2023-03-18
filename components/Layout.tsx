@@ -34,21 +34,24 @@ const Layout = ({ children }: Props) => {
 	}
 
 
-	const { loggedIn } = useAuth();
-	const { setModalView, openModal } = useUI();
+	const { user, loading } = useAuth();
+	
+	const { setModalView, openModal, closeModal } = useUI();
   
   
 	useEffect(() => {
-		console.log('isLoggedIn', loggedIn)
-		if(!loggedIn) {
+		console.log('isLoggedIn', user, loading)
+		if(!loading && user == null || user.email == null) {
 			setModalView('LOGIN_VIEW');
 			openModal();
-	  	}
-	}, [loggedIn, openModal, setModalView]) 
+	  	}else{
+			closeModal();
+		}
+	}, [user, openModal, setModalView]) 
 	
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">{children}</main>
+    <div className="bg-gray-100 min-h-screen min-w-screen">
+      <main className="w-full h-full">{children}</main>
       <ModalUI />
     </div>
   )

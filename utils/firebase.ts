@@ -3,9 +3,10 @@ import { Firestore, getFirestore, } from "firebase/firestore";
 import { Analytics, getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider, 
   signInWithPopup, signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+  createUserWithEmailAndPassword, sendEmailVerification, setPersistence, browserLocalPersistence, UserCredential, User, onAuthStateChanged } from "firebase/auth";
 import * as admin from "firebase-admin"
 import AuthError from "./AuthErrorCode";
+import { useAuth } from "@/components/auth/AuthContext";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -30,9 +31,15 @@ const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });
 
 
+
 const signInWithGoogle = async () => {
+  let persist = await setPersistence(auth, browserLocalPersistence).then(() => {
+    return true;
+  }).catch((error) => {
+    return false;
+  });
   const res = await signInWithPopup(auth, provider);
-  console.log(res);
+  
   return res;
 };
 
@@ -41,7 +48,6 @@ const signOut = () => {
 };
 
 const connectWithEmailAndPassword = async (isSignin: boolean, email: string, password: string) => {
-  auth.signOut();
   
   let connect = null;
   try{
@@ -51,12 +57,9 @@ const connectWithEmailAndPassword = async (isSignin: boolean, email: string, pas
       connect = await createUserWithEmailAndPassword(auth, email, password);
     }
 
-    console.log("Auth",auth)
-
     return connect;
 
   } catch (error: any) {
-    console.log("ErrorTry",error.code);
 
     let message = AuthError[error.code];
     throw message;
@@ -70,9 +73,9 @@ const sendVerifEmail = async () => {
   const user = auth.currentUser;
   if (user) {
     let mail = await sendEmailVerification(user)
-    console.log("Mail",mail);
   }
 };
 
-export { signInWithGoogle, connectWithEmailAndPassword, sendVerifEmail, signOut };
-export { firebaseConfig, firestore, auth, };
+export { signInWithGoogle, connectWithEmailAndPassword, sendVerifEmail, signOut, onAuthStateChanged };
+export { firebaseConfig, firestore, auth };
+export type { UserCredential, User };

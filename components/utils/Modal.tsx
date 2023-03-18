@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Transition } from 'react-transition-group';
 import { useUI } from "../UIContext";
 import ReactPortal from "./ReactPortal";
+import { auth } from "@/utils/firebase";
 
 interface ModalProps {
   children: React.ReactNode;
@@ -16,12 +17,10 @@ function Modal({
   const { displayModal, closeModal } = useUI();
 
   const handleInsideClick = (e: React.MouseEvent) => {
+    console.log("Auth", auth);
     e.stopPropagation();
   }
 
-  useEffect(() => {
-    console.log('displayModal', displayModal)
-  }, [displayModal])
 
   return (
     <ReactPortal>

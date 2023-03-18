@@ -9,7 +9,7 @@ import { ManagedUIContext, useUI } from '../components/UIContext';
 import { useEffect } from 'react';
 
 
-function MyApp({ Component, pageProps, session }: AppProps & {session: Session}) {
+function MyApp({ Component, pageProps }: AppProps) {
 
  
 
@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps, session }: AppProps & {session: Session})
     <AuthProvider>
       <ManagedUIContext>
         <Layout>
-          <Component {...pageProps} session={session} />
+          <Component {...pageProps} />
         </Layout>
         <div id="portal">
 
