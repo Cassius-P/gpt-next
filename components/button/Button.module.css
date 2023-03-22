@@ -81,3 +81,22 @@
 .btn-red:disabled {
   @apply bg-opacity-50 cursor-not-allowed;
 }
+
+
+/* GRAY */
+/* BLUE */
+.btn-gray {
+  @apply bg-gray-500 hover:bg-gray-700 text-white;
+}
+.btn-gray:hover {
+  @apply bg-gray-700;
+}
+.btn-gray:focus {
+  @apply ring-gray-500;
+}
+.btn-gray:active {
+  @apply bg-gray-900;
+}
+.btn-gray:disabled {
+  @apply bg-opacity-50 cursor-not-allowed;
+}

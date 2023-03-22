@@ -2,29 +2,30 @@
 import '@/styles/globals.css';
 import type { AppProps } from 'next/app'
 
-import Layout from '../components/Layout'
-import { Session } from 'inspector';
-import { AuthProvider, useAuth } from '../components/auth/AuthContext';
-import { ManagedUIContext, useUI } from '../components/UIContext';
-import { useEffect } from 'react';
+import Layout from '@/components/Layout'
+import { AuthProvider } from '@/components/auth/AuthContext';
+import { ManagedUIContext } from '@/components/UIContext';
+import { ConversationProvider } from '@/components/utils/ConversationContext';
 
 
 function MyApp({ Component, pageProps }: AppProps) {
 
- 
+
 
   return (
     <AuthProvider>
       <ManagedUIContext>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <ConversationProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ConversationProvider>
         <div id="portal">
 
         </div>
       </ManagedUIContext>
     </AuthProvider>
-    
+
   )
 }
 

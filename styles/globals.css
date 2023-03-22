@@ -7,6 +7,24 @@ body {
   @apply h-screen
 }
 
+textarea{
+  overflow-x: hidden !important ;
+}
+
+*::-webkit-scrollbar,
+*::-webkit-scrollbar-thumb {
+  width: 26px;
+  border-radius: 13px;
+  background-clip: padding-box;
+  border: 10px solid transparent;
+}
+
+*::-webkit-scrollbar-thumb {        
+  background-color: #acaaaa;
+
+}
+
+
 .path {
   stroke-dasharray: 1000;
   stroke-dashoffset: 0;
