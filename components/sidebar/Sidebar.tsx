@@ -16,7 +16,7 @@ export default function Sidebar() {
                 </Link>
 
             </div>
-            {conversations.map((conversation:Conversation) => {
+            {conversations && conversations.map((conversation:Conversation) => {
                 return (
                     <div className="mb-2 flex flex-col
                     " key={conversation.id}>
