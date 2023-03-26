@@ -1,7 +1,10 @@
 export interface Message {
+  id?: string,
   content: string,
-  senderId: string,
+  role: 'user' | 'assistant'
   createdAt: any
   state?: 'sent' | 'failed' | 'loading'
+
+  conversationID?: string
 
 }
