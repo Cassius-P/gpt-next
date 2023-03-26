@@ -2,7 +2,19 @@ import { Message } from "@/models/Message";
 import { db } from "@/utils/firebase";
 import { getCollection } from "@/utils/firestore";
 import { isUserConnected } from "@/utils/TokenHandler";
-import { addDoc, arrayUnion, doc, DocumentData, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
+import {
+    addDoc,
+    arrayUnion,
+    doc,
+    DocumentData,
+    getDoc,
+    getDocs,
+    orderBy,
+    query,
+    setDoc,
+    updateDoc,
+    where
+} from "firebase/firestore";
 import { NextApiRequest, NextApiResponse } from "next";
 import { OpenAI } from "openai-streams/node";
 
@@ -31,22 +43,21 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    const chatRef = doc(db, "messages", id.toString());
-    const result = await getDoc(chatRef);
+    const chatRef = getCollection("messages")
+    const q = query(chatRef, where("conversationID", "==", id), orderBy("createdAt", "asc"));
+    const results = await getDocs(q);
 
-    if(!result.exists()) {
-        res.status(400).json({ error: "No messages" });
-        return;
-    }
 
-    let docs = {
-        id: result.id,
-        data: result.data()
-    }
-    
-      console.log('Chat', docs);
+    const messages:Array<Message> = [];
 
-    res.status(200).json({ message: docs});
+    results.forEach((doc) => {
+        let {content, role, createdAt, state} = doc.data();
+        messages.push({id: doc.id, content, role, createdAt, state})
+    });
+
+      console.log('Chat', messages);
+
+    res.status(200).json({ message: messages});
 }
 
 export async function POST(req: NextApiRequest, res: NextApiResponse) {
@@ -75,14 +86,13 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
         return;
     }
 
-    let msg = {
+    let msg:Message = {
         content: message,
         createdAt: new Date(),
-        senderId: isReply ? "ia" : "user",
+        role: isReply ? "assistant" : "user",
+        conversationID: id.toString(),
     }
 
-
-    let msgSaved = false;
     if(createConversation){
         try {
             const conversationsRef = getCollection("conversations");
@@ -94,56 +104,23 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
             }
             const c = await addDoc(conversationsRef, conv);
             let conversationID = c.id;
-
-
-            const messagesRef = doc(db, "messages", conversationID)
-            const m = await setDoc(messagesRef, {
-                messages:[msg]
-            });
-
-            msgSaved = true;
+            msg.conversationID = conversationID;
         }catch (e) {
             console.error("Error updating document: ", e);
             res.status(500).json({ error: "Error updating document", message: msg })
         }
-
-
-
     }
 
-    if(!createConversation){
-        try {
-            const messagesRef = doc(db, "messages", id.toString())
-            const m = await updateDoc(messagesRef, {
-                messages: arrayUnion(msg)
-            });
-            msgSaved = true;
-        } catch (e) {
-            console.error("Error updating document: ", e);
-            res.status(500).json({ error: "Error updating document", message: msg })
-        }
-    }
+    try {
+        const messagesRef = getCollection("messages");
+        const m = await addDoc(messagesRef, msg);
 
-
-
-    if(msgSaved){
-        const stream = await OpenAI(
-            "chat",
-            {
-                model: "gpt-3.5-turbo",
-                messages: [
-                    {
-                        content: msg.content,
-                        role: "user",
-                    },
-                ],
-            },
-            { apiKey: process.env.OPENAI_API_KEY    }
-        );
-
-        stream.pipe(res);
-    }else{
+        msg.id = m.id;
+    } catch (e) {
+        console.error("Error updating document: ", e);
         res.status(500).json({ error: "Error updating document", message: msg })
     }
+
+    res.status(201).json({ message: msg })
 
 }

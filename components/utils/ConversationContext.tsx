@@ -2,11 +2,7 @@ import { createContext, ReactNode, useState, useContext, useEffect } from "react
 import { useRouter } from "next/router";
 import { Conversation } from "@/models/Conversations";
 import { Message } from "@/models/Message";
-import {TextDecoderStream} from "stream/web";
-
-
-
-
+import {createParser, ParsedEvent, ReconnectInterval} from 'eventsource-parser'
 
 
 export const ConversationContext = createContext<any>({});
@@ -18,7 +14,11 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
     const [activeConversation, setActiveConversation] = useState('0')
     const [activeConversationMessages, setActiveConversationMessages] = useState<Array<Message>>([])
 
+    const [responseStopped, setResponseStopped] = useState<boolean>(false)
+    const [responseLoading, setResponseLoading] = useState<boolean>(false)
+
     const router = useRouter();
+
 
 
     useEffect(() => {
@@ -50,7 +50,7 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
         let message:Array<Conversation> = data.message;
         console.log('Conversations', message)
 
-
+        setConversations(message)
         return message;
     }
 
@@ -66,7 +66,7 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
         let res: Response = await fetch(`/api/conversations/${conversationID}`)
         let data = await res.json()
         console.log('DATA', data)
-        let message:Array<Message> = data.message.data.messages;
+        let message:Array<Message> = data.message
         console.log('Conversation messages', message)
 
         
@@ -76,63 +76,176 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
     }
 
     const submitMessage = async (text: string) => {
-        console.log("text", text);
-        
-        let url = `/api/conversations/${activeConversation}`
-        console.log(`Post to ${url}`, { message: text })
-        
-        let res:Response = await fetch(url, {
+        let message:Message = {
+            id: 'tmp',
+            content: text,
+            createdAt: new Date(),
+            role: 'user',
+        }
+        addMessage(message);
+        const savedMessage = await sendMessage(message)
+
+        if(savedMessage == null) {
+            message.state = 'failed'
+            updateLastMessage(message);
+            return;
+        }
+
+        updateLastMessage(savedMessage)
+
+
+        askResponse(savedMessage).then((response:Message | null) => {
+            if(response == null) return;
+            sendMessage(response).then((message:Message) => {
+                //updateLastMessage(message);
+            });
+        });
+    }
+
+    const addMessage = (message: Message) => {
+        let array = activeConversationMessages;
+        array.push(message)
+        setActiveConversationMessages(array)
+    }
+
+    const sendMessage = async (message: Message) => {
+        //Send message to API
+        //then Update message state
+        let isReply = false;
+        if(message.role == 'assistant') {
+            isReply = true;
+        }
+
+        const newMessage = await fetch(`/api/conversations/${activeConversation}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ message: text })
+            body: JSON.stringify({ message: message.content, isReply })
         })
 
-       /* let rep = await res.json()
-        console.log('message', rep)
-
-        let msg = rep.message
-        const state = rep.status == 200 ? 'sent' : 'failed'
-
-        if(msg.conversation){
-            let conv:Conversation = msg.conversation
-            setConversations([...conversations, conv])
-            router.push(`/${msg.conversation.id}`)
+        if(newMessage.status != 201) {
+            console.log('Error', newMessage)
+            return null;
         }
 
-        msg.status = state;*/
-        if (res.body ==null) {
-            console.log('res.body is null')
+        const res = await newMessage.json()
+        console.log("Sent message", res.message)
+        return res.message;
+    }
+
+    const updateMessage = (message: Message) => {
+        let newMessages = activeConversationMessages.map((msg) => {
+            if(msg.id == message.id) {
+                return message
+            }
+            return msg
+        })
+        setActiveConversationMessages(newMessages)
+    }
+
+    const updateLastMessage = (message: Message) => {
+        updateMessageWithIndex(message, activeConversationMessages.length - 1)
+    }
+
+    const updateMessageWithIndex = (message: Message, index: number) => {
+        let array = activeConversationMessages;
+        array[index] = message;
+
+        let newMessages = [...array]
+        setActiveConversationMessages(newMessages)
+    }
+
+    const askResponse = async (message: Message) => {
+
+        let reply:Message = {
+            content: '',
+            createdAt: new Date(),
+            role: 'assistant',
+            state: 'loading',
+            id: 'tmp'
         }
-        const reader: ReadableStreamDefaultReader<Uint8Array> = res.body!.getReader();
-        const decoder: TextDecoder = new TextDecoder();
-        let val: string = '';
 
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            let str = decoder.decode(value);
-
-            if (val == '') {
-                str = "[" + str.replaceAll("}{", "},{") + "]";
-                str = JSON.parse(str);
-                str = str[1]['content'] + str[2]['content']
-            }else {
-                str = JSON.parse(str);
-                str = str?.content
+        let content = '';
+        fetch(`/api/chat/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ messages:activeConversationMessages })
+        }).then( async (response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
 
-            val += str;
-        }
+            if (response.body == null) {
+                return;
+            }
 
-        console.log('val', val)
+            const decoder = new TextDecoder();
+            const reader = response.body.getReader();
+
+            let isAdded = false;
+
+            try {
+                while (!responseStopped) {
+                    const {done, value} = await reader.read();
+                    if (done) {
+                        break;
+                    }
+                    if (value) {
+                        let str = "[" + decoder.decode(value, {stream: true}) + "]";
+
+                        if(str.endsWith(",]")){
+                            str = str.substring(0, str.length - 2) + "]";
+                        }
+                        let obj = JSON.parse(str);
+
+                        for (let i = 0; i < obj.length; i++) {
+                            if(obj[i] == "DONE"){
+                                setResponseLoading(false);
+                                break;
+                            }
+
+                            if(obj[i].choices != null && obj[i].choices.length > 0){
+                                let text = obj[i].choices[0].delta.content ? obj[i].choices[0].delta.content : '';
+                                content += text;
+                            }
+                        }
 
 
-        //setActiveConversationMessages([...activeConversationMessages, msg])
+                        reply.content = content;
 
-        return val;
+                        if(!isAdded) {
+                            addMessage(reply);
+                            isAdded = true;
+                        }else{
+                            updateLastMessage(reply);
+                        }
+                    }
+                }
+            } finally {
+                reader.releaseLock();
+            }
+
+
+        }).catch(error => {
+            console.error('Error:', error)
+        }).finally(() => {
+
+            delete reply.state;
+            delete reply.id;
+
+            sendMessage(reply).then((message:Message) => {
+                updateLastMessage(message);
+            })
+            setResponseLoading(false)
+            setResponseStopped(false)
+        });
+
+        return reply;
     }
+
 
     return <ConversationContext.Provider value={{
         conversations,
@@ -142,7 +255,9 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
         activeConversation,
         activeConversationMessages,
         setActiveConversationMessages,
-        setActiveConversation }}>{children}</ConversationContext.Provider>
+        setActiveConversation,
+        responseStopped, setResponseStopped, responseLoading
+        }}>{children}</ConversationContext.Provider>
 }
 
 export const useConversation = () =>  useContext(ConversationContext)
