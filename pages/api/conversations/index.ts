@@ -30,7 +30,5 @@ export default async function GET(req: NextApiRequest, res: NextApiResponse) {
       });
 
 
-    // FETCH STUFF HERE!! 🚀
-
     res.status(200).json({ message: docs });
 }
