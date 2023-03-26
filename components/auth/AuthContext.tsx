@@ -2,6 +2,7 @@ import { createContext, FC, ReactNode, useContext, useEffect, useMemo, useState 
 import { auth, onAuthStateChanged, signOut, signInWithGoogle, connectWithEmailAndPassword, type UserCredential, onIdTokenChanged } from "@/utils/firebase";
 import nookies from 'nookies';
 import { refreshToken } from "firebase-admin/app";
+import {ConversationContext, useConversation} from "@/components/utils/ConversationContext";
 
 export interface AuthState {
   authUser : UserCredential | null;
@@ -26,22 +27,32 @@ export const AuthProvider= ({children} : {children: ReactNode}) =>{
   const [user, setUser] = useState<UserType | null>({ email: null, uid: null, token: null});
   const [loading, setLoading] = useState<boolean>(true);
 
+  const { getConversations}  = useConversation()
   
 
   useEffect(() => {
-    setLoading(true);
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    console.log("useEffect", user)
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setLoading(true)
+      console.log("subscribe", user)
       if (user) {
-        setUser({
-          email: user.email,
-          uid: user.uid,
-          token : await user.getIdToken()
+        user.getIdToken().then((token) => {
+          setUser({
+            email: user.email,
+            uid: user.uid,
+            token
+          });
         });
+
+        getConversations()
+
       } else {
         setUser({ email: null, uid: null, token: null});
       }
+
+
+      setLoading(false);
     });
-    setLoading(false);
     return () => unsubscribe();
   }, []);
 
