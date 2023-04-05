@@ -16,3 +16,4 @@ export const isUserConnected = async (req: NextApiRequest, res: NextApiResponse)
 
     return verif;
 }
+
