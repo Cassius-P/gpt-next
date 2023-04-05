@@ -1,6 +1,6 @@
 import { Message } from "@/models/Message";
 import { db } from "@/utils/firebase";
-import { getCollection } from "@/utils/firestore";
+import {getCollection, tokenize} from "@/utils/firestore";
 import { isUserConnected } from "@/utils/TokenHandler";
 import {
     addDoc,
@@ -24,6 +24,8 @@ export default function handler (req: NextApiRequest, res: NextApiResponse) {
         GET(req, res);
     } else if(req.method === "POST") {
         POST(req, res);
+    } else if (req.method === "PUT") {
+        PUT(req, res);
     }
 }
 
@@ -52,6 +54,8 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
 
     results.forEach((doc) => {
         let {content, role, createdAt, state} = doc.data();
+
+        createdAt = createdAt.toDate().toLocaleString();
         messages.push({id: doc.id, content, role, createdAt, state})
     });
 
@@ -87,11 +91,16 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
     }
 
     let msg:Message = {
-        content: message,
+        content: message.content,
         createdAt: new Date(),
-        role: isReply ? "assistant" : "user",
+        role: message.role,
         conversationID: id.toString(),
     }
+
+    console.log("Chat message received", msg)
+
+
+    let response = {}
 
     if(createConversation){
         try {
@@ -104,10 +113,21 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
             }
             const c = await addDoc(conversationsRef, conv);
             let conversationID = c.id;
+
+
+
+
             msg.conversationID = conversationID;
+            response["conversation"] = {id: conversationID, data:conv}
         }catch (e) {
-            console.error("Error updating document: ", e);
-            res.status(500).json({ error: "Error updating document", message: msg })
+            console.error("Error creating document: ", e);
+            res.status(500).json({
+                error: {
+                    message: "Error creating document",
+                    e
+                },
+                message: msg
+            })
         }
     }
 
@@ -116,11 +136,50 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
         const m = await addDoc(messagesRef, msg);
 
         msg.id = m.id;
+
+        response["message"] = msg;
     } catch (e) {
         console.error("Error updating document: ", e);
-        res.status(500).json({ error: "Error updating document", message: msg })
+        res.status(500).json({
+            error: {
+                message: "Error updating document",
+                e
+            },
+            message: msg
+        })
     }
 
-    res.status(201).json({ message: msg })
+    res.status(201).json(response)
 
+}
+
+
+export async function PUT(req: NextApiRequest, res: NextApiResponse) {
+    const verif = await isUserConnected(req, res);
+    if(!verif) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+    }
+
+    const { id } = req.query;
+
+    if(!id) {
+        res.status(400).json({ error: "No ID" });
+        return;
+    }
+
+    if(id == '0'){
+        return await POST(req, res);
+    }
+
+    const { message } = req.body;
+    if(!message) {
+        res.status(400).json({ error: "No message" });
+        return;
+    }
+
+    const messagesRef = getCollection("messages");
+    const m = await updateDoc(doc(messagesRef, message.id), message);
+
+    res.status(200).json({message})
 }

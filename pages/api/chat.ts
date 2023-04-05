@@ -1,5 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import {Message} from "@/models/Message";
+import { createParser } from 'eventsource-parser'
+
+
+
+
 export default async function handler (req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method !== "POST") {
@@ -21,23 +26,23 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     return;
   }
 
+
   messages = messages.map((m:Message) => {
     delete m.id;
     delete m.createdAt;
     delete m.state;
     delete m.conversationID;
+
+    if(m.role == "error"){
+        m.role = "user";
+    }
       return m;
   })
-/*
-  const codeIndication = {
-    content: "When indicating ``` a code block, define the language next to it like this ```js",
-    role: "system"
-  }
 
-  messages = [codeIndication, ...messages];*/
+
 
   const openaiUrl = "https://api.openai.com/v1/chat/completions";
-  const API_KEY = process.env.OPENAI_API_KEY;
+  const API_KEY = process.env.OPENAI_MAIN_API_KEY;
   if (!API_KEY) {
     res.status(500).json({ error: "Internal Error" });
     return;
@@ -47,57 +52,124 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     model: 'gpt-3.5-turbo',
     stream: true,
     messages,
-    temperature: 0.5,
+    n : 1,
   };
 
-  const openaiConfig = {
-    method: 'POST',
+
+  let message = '';
+  const onMessage =  (data:string) => {
+
+    if (data === '[DONE]') {
+      res.write(data);
+      res.end();
+
+
+      return
+    }
+
+    try {
+      const response = JSON.parse(data)
+      console.log("OpenAI stream response", JSON.stringify(response))
+      if(response.usage){
+        //console.log("OpenAI stream usage", response.usage)
+      }
+
+      if (response?.choices?.length && response.choices[0].delta.content){
+        message += response.choices[0].delta.content;
+        res.write(response.choices[0].delta.content)
+      }
+
+    } catch (err) {
+      console.warn('OpenAI stream SEE event unexpected error', err)
+      res.status(500).send({ message: "Internal Server Error" });
+    }
+  }
+
+  let openaiSSEConfig = {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${API_KEY}`,
     },
     body: JSON.stringify(parameters),
+    onMessage,
   };
 
   try {
-    const openaiResponse = await fetch(openaiUrl, openaiConfig);
+    fetchSSE(
+        openaiUrl,
+        openaiSSEConfig
+    ).catch((err) => {
+        console.error(err);
+        res.status(500).send({ message: "Internal Server Error" });
+    });
 
-    if (!openaiResponse.ok) {
-      throw new Error(`Failed to fetch data from OpenAI. Status code: ${openaiResponse.status} : ${openaiResponse.body}`);
-    }
-
-    const stream = openaiResponse.body;
-
-    await streamResponse(stream, res);
-
-    await res.end();
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Internal Server Error" });
   }
+
+
 }
 
-async function streamResponse(stream: ReadableStream<Uint8Array> | null, response: NextApiResponse) {
+async function fetchSSE(
+    url: string,
+    options: Parameters<typeof fetch>[1] & { onMessage: (data: string) => void }) {
+  const { onMessage, ...fetchOptions } = options
+  const res = await fetch(url, fetchOptions)
+  if (!res.ok) {
+    let reason: string
 
-  if(!stream) {
-    response.status(500).json({ error: "Internal Error" });
-    return;
+    try {
+      reason = await res.text()
+    } catch (err) {
+      reason = res.statusText
+    }
+
+    const msg = `ChatGPT error ${res.status}: ${reason}`
+
+
+    throw msg
   }
 
-  let decoder = new TextDecoder();
-  let encoder = new TextEncoder();
-  const writable = new WritableStream({
-    write(chunk) {
-      chunk = decoder.decode(chunk)
-      if(chunk.startsWith("data: ")) {
-        chunk = chunk.replace("data: ", "").trim();
-        chunk = chunk + ",";
-      }
-      console.log("chunk", chunk)
-      chunk = encoder.encode(chunk);
-      response.write(chunk);
-    },
-  });
+  const parser = createParser((event) => {
+    if (event.type === 'event') {
+      onMessage(event.data)
+    }
+  })
 
-  await stream.pipeTo(writable);
+  if (!res.body?.getReader) {
+    const body: NodeJS.ReadableStream = res.body as any
+
+    if (!body.on || !body.read) {
+      throw new Error('Unexpected response body')
+    }
+
+    body.on('readable', () => {
+      let chunk: string | Buffer
+      while (null !== (chunk = body.read())) {
+        parser.feed(chunk.toString())
+      }
+    })
+  } else {
+    for await (const chunk of streamAsyncIterable(res.body)) {
+      const str = new TextDecoder().decode(chunk)
+      parser.feed(str)
+    }
+  }
+}
+
+async function* streamAsyncIterable<T>(stream: ReadableStream<T>) {
+  const reader = stream.getReader()
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) {
+        return
+      }
+      yield value
+    }
+  } finally {
+    reader.releaseLock()
+  }
 }
