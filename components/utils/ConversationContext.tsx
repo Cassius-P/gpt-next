@@ -13,6 +13,7 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
     const [conversations, setConversations] = useState<Array<Conversation>>([])
     const [activeConversation, setActiveConversation] = useState('0')
     const [activeConversationMessages, setActiveConversationMessages] = useState<Array<Message>>([])
+    const [activeConversationError, setActiveConversationError] = useState<boolean>(false)
 
     const [responseStopped, setResponseStopped] = useState<boolean>(false)
     const [responseLoading, setResponseLoading] = useState<boolean>(false)
@@ -23,7 +24,6 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
 
     useEffect(() => {
         let id = router.query.id;
-        console.log('ID r', id);
 
         if (id == null || id == undefined) {
             id = '0'
@@ -44,11 +44,18 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
             });
     }, [])
 
+
+    useEffect(() => {
+        if(activeConversationMessages.length == 0) return;
+
+        const lastMessage = activeConversationMessages[activeConversationMessages.length - 1]
+        if(lastMessage.role == 'error') setActiveConversationError(true);
+    }, [activeConversationMessages])
+
     const getConversations = async () => {
         let res: Response = await fetch('/api/conversations')
         let data = await res.json()
         let message:Array<Conversation> = data.message;
-        console.log('Conversations', message)
 
         setConversations(message)
         return message;
@@ -57,17 +64,14 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
 
     
     const getConversation = async (conversationID: string) => {
-        if(conversationID == null || conversationID == undefined) return []
-        if(conversationID == '0') {
-            console.log("fetch id 0 ")
+        if(activeConversation == '0' && conversationID == null || conversationID == undefined) return []
+        if(activeConversation == '0' && conversationID == '0') {
             return activeConversationMessages
         }
 
         let res: Response = await fetch(`/api/conversations/${conversationID}`)
         let data = await res.json()
-        console.log('DATA', data)
         let message:Array<Message> = data.message
-        console.log('Conversation messages', message)
 
         
         setActiveConversationMessages(message)
@@ -83,7 +87,7 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
             role: 'user',
         }
         addMessage(message);
-        const savedMessage = await sendMessage(message)
+        const savedMessage:Message = await sendMessage(message)
 
         if(savedMessage == null) {
             message.state = 'failed'
@@ -91,13 +95,22 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
             return;
         }
 
+        if(activeConversation == '0' && savedMessage.conversationID != null) {
+            const convID = savedMessage.conversationID;
+            setActiveConversation(convID)
+        }
+
+
         updateLastMessage(savedMessage)
 
 
-        askResponse(savedMessage).then((response:Message | null) => {
+        askResponse({message}).then((response:Message | null) => {
             if(response == null) return;
+
+            response.conversationID = savedMessage.conversationID;
+
             sendMessage(response).then((message:Message) => {
-                //updateLastMessage(message);
+
             });
         });
     }
@@ -109,39 +122,68 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
     }
 
     const sendMessage = async (message: Message) => {
-        //Send message to API
-        //then Update message state
         let isReply = false;
         if(message.role == 'assistant') {
             isReply = true;
         }
 
-        const newMessage = await fetch(`/api/conversations/${activeConversation}`, {
+
+        let convID = activeConversation;
+
+        if(convID == '0' && message.conversationID != null && message.conversationID != '0' && isReply) {
+            convID = message.conversationID;
+        }
+
+        if(convID == '0' && isReply) {
+            return null;
+        }
+
+        if(message.content == null || message.content == '') return null;
+
+        const newMessage = await fetch(`/api/conversations/${convID}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ message: message.content, isReply })
+            body: JSON.stringify({ message, isReply })
         })
 
         if(newMessage.status != 201) {
-            console.log('Error', newMessage)
             return null;
         }
 
         const res = await newMessage.json()
-        console.log("Sent message", res.message)
+
+
+
+        if(res.conversation != null) {
+            addConversation(res.conversation)
+        }
+
         return res.message;
     }
 
-    const updateMessage = (message: Message) => {
-        let newMessages = activeConversationMessages.map((msg) => {
-            if(msg.id == message.id) {
-                return message
-            }
-            return msg
+    const updateMessage = async (message: Message) => {
+
+        console.log("Updating message", message)
+        const res = await fetch(`/api/conversations/${message.conversationID}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message })
         })
-        setActiveConversationMessages(newMessages)
+
+        if(!res.ok){
+            console.log("Update failed")
+            message.state = 'failed'
+            return message
+        }
+
+        let m = await res.json()
+        console.log("Updated to", m)
+        return m.message;
+
     }
 
     const updateLastMessage = (message: Message) => {
@@ -156,7 +198,13 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
         setActiveConversationMessages(newMessages)
     }
 
-    const askResponse = async (message: Message) => {
+    const addConversation = (conversation: Conversation) => {
+        let array = conversations;
+        array.push(conversation)
+        setConversations(array)
+    }
+
+    const askResponse = async ({message, messageToRegen=null}: {message: Message, messageToRegen?:Message|null}) => {
 
         let reply:Message = {
             content: '',
@@ -167,6 +215,11 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
         }
 
         let content = '';
+        let isAdded = false;
+
+
+        setResponseLoading(true);
+
         fetch(`/api/chat/`, {
             method: 'POST',
             headers: {
@@ -185,7 +238,6 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
             const decoder = new TextDecoder();
             const reader = response.body.getReader();
 
-            let isAdded = false;
 
             try {
                 while (!responseStopped) {
@@ -194,27 +246,14 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
                         break;
                     }
                     if (value) {
-                        let str = "[" + decoder.decode(value, {stream: true}) + "]";
 
-                        if(str.endsWith(",]")){
-                            str = str.substring(0, str.length - 2) + "]";
-                        }
-                        let obj = JSON.parse(str);
+                        let str = decoder.decode(value, {stream: true});
+                        if(str === "[[DONE]]" || str === "[DONE]") {
+                            setResponseLoading(false);
+                            break;
+                        };
 
-                        for (let i = 0; i < obj.length; i++) {
-                            if(obj[i] == "DONE"){
-                                setResponseLoading(false);
-                                break;
-                            }
-
-                            if(obj[i].choices != null && obj[i].choices.length > 0){
-                                let text = obj[i].choices[0].delta.content ? obj[i].choices[0].delta.content : '';
-                                content += text;
-                            }
-                        }
-
-
-                        reply.content = content;
+                        reply.content += str;
 
                         if(!isAdded) {
                             addMessage(reply);
@@ -224,26 +263,74 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
                         }
                     }
                 }
+            } catch(e){
+                throw e;
             } finally {
                 reader.releaseLock();
             }
 
 
         }).catch(error => {
-            console.error('Error:', error)
+            reply.role = 'error';
+            reply.content = error.message;
+            setActiveConversationError(true)
         }).finally(() => {
 
             delete reply.state;
             delete reply.id;
 
-            sendMessage(reply).then((message:Message) => {
-                updateLastMessage(message);
-            })
+
+            message.state = "sent"
+            if(messageToRegen) {
+                messageToRegen.role = reply.role;
+                messageToRegen.content = reply.content;
+
+                updateMessage(messageToRegen).then((message:Message) => {
+                    isAdded ? updateLastMessage(message) : addMessage(message)
+                })
+            }else{
+                sendMessage(reply).then((message:Message) => {
+                    isAdded ? updateLastMessage(message) : addMessage(message)
+                })
+            }
+
+
             setResponseLoading(false)
             setResponseStopped(false)
         });
 
         return reply;
+    }
+
+    const regenerateResponse = async () => {
+
+        if(activeConversationMessages.length < 2) {
+            console.log ("No messages to regenerate");
+        };
+        const beforeLastMessage = activeConversationMessages[activeConversationMessages.length - 2];
+
+        if(beforeLastMessage == null) return;
+        if(beforeLastMessage.role == 'assistant') return;
+
+        setActiveConversationError(false)
+
+        let array = activeConversationMessages;
+        let lastMessage = array.pop();
+        setActiveConversationMessages([...array]);
+
+
+        askResponse({message: beforeLastMessage, messageToRegen: lastMessage});
+
+
+
+
+    }
+
+
+    const newChat = async () => {
+        await router.push('/');
+        setActiveConversation('0');
+        setActiveConversationMessages([]);
     }
 
 
@@ -254,9 +341,13 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
         submitMessage,
         activeConversation,
         activeConversationMessages,
+        activeConversationError,
         setActiveConversationMessages,
         setActiveConversation,
-        responseStopped, setResponseStopped, responseLoading
+        setActiveConversationError,
+        responseStopped, setResponseStopped, responseLoading,
+        regenerateResponse,
+        newChat
         }}>{children}</ConversationContext.Provider>
 }
 
