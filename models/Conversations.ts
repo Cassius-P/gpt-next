@@ -3,9 +3,9 @@
 export interface Conversation {
   id: string, 
   data: {
-      createdAt: any,
-      updatedAt: any,
+      createdAt?: any,
+      updatedAt?: any,
       title: string,
-      userID: string,
+      userID?: string,
   }
 }
