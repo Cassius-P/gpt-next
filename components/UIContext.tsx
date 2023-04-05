@@ -27,6 +27,7 @@ type VIEWS =
   | "LOGIN_VIEW"
   | "REGISTER_VIEW"
   | "CONFIRMED_REGISTER_VIEW"
+  | "SEARCH_VIEW"
 
 export const UIContext = createContext<UIState | any>(initialState)
 UIContext.displayName = "UIContext";
@@ -81,8 +82,6 @@ export const UIProvider: FC<{ children?: ReactNode }> = (props) => {
       closeModal,
       setModalView
     }),
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [state]
   )
 

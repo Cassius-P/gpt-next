@@ -1,9 +1,10 @@
 
-import { useEffect } from 'react';
-import { Transition } from 'react-transition-group';
+import {Fragment, useEffect} from 'react';
+import { Combobox, Dialog, Transition } from '@headlessui/react'
 import { useUI } from "../UIContext";
 import ReactPortal from "./ReactPortal";
 import { auth } from "@/utils/firebase";
+import Search from "@/components/utils/Search";
 
 interface ModalProps {
   children: React.ReactNode;
@@ -22,22 +23,37 @@ function Modal({
   }
 
 
+  const isSearch = () => {
+    if(children.length > 0 && children[3].type === Search) {
+      return true;
+    }
+    return false;
+  }
+
+
   return (
     <ReactPortal>
-      <div className={`block relative z-20 ${displayModal ? "opacity-100 prevent-scroll" : "opacity-0 pointer-events-none"} transition-all ease-in-out duration-300 delay-100`}>
-        <div className={`fixed inset-0 ${displayModal ? "bg-black/50" : "bg-transparent"} transition-all ease-in-out duration-300 delay-100`} />
-        
-        
-          <div className={`fixed inset-0 flex items-center justify-center ${displayModal ? "m-0" : "mt-24"} transition-all ease-in-out duration-300 delay-100`}>
-            <div className="shadow-2xl bg-white rounded-lg transition-all ease-in-out duration-300 p-4 w-4/5 sm:w-3/5 lg:w-1/3 xl:w-1/4  2xl:1/5"
-              onClick={handleInsideClick}>
-              <div>
-                {children}
-              </div>
-            </div>
-          </div>
-        
-      </div>
+
+        <div className={`block relative z-20 ${displayModal ? "opacity-100 prevent-scroll" : "opacity-0 pointer-events-none"} transition-all ease-in-out duration-300 delay-100`}>
+          {isSearch() && displayModal && children}
+          {!isSearch() && (
+              <>
+                <div className={`fixed inset-0 ${displayModal ? "bg-black/50" : "bg-transparent"} transition-all ease-in-out duration-300 delay-100`} />
+
+
+                <div className={`fixed inset-0 flex items-center justify-center ${displayModal ? "m-0" : "mt-24"} transition-all ease-in-out duration-300 delay-100`}>
+
+                  <div className="shadow-2xl bg-white rounded-lg transition-all ease-in-out duration-300 p-4 w-4/5 sm:w-3/5 lg:w-1/3 xl:w-1/4  2xl:1/5"
+                       onClick={handleInsideClick}>
+                    <div>
+                      {children}
+                    </div>
+                  </div>
+
+                </div>
+              </>
+              )}
+        </div>
     </ReactPortal>
   )
 }

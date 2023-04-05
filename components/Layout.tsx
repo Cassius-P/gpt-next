@@ -11,6 +11,7 @@ import Sidebar from './sidebar/Sidebar';
 import { useUI } from "./UIContext";
 import MainFrame from './utils/MainFrame';
 import Modal from './utils/Modal';
+import Search from "@/components/utils/Search";
 
 
 interface LayoutProps {
@@ -25,11 +26,12 @@ const Layout = ({ children }: LayoutProps) => {
 		closeModal,
 	}) => {
 
-		return (
+		return  (
 			<Modal onClose={closeModal}>
 				{modalView === 'LOGIN_VIEW' && <AuthForm isSignIn={true} />}
 				{modalView === 'REGISTER_VIEW' && <AuthForm isSignIn={false} />}
 				{modalView === 'CONFIRMED_REGISTER_VIEW' && <ConfirmationView message="An verification email was sent. Verify your account before connecting" />}
+				{modalView === 'SEARCH_VIEW' && <Search/>}
 			</Modal>
 		)
 	}

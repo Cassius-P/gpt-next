@@ -5,6 +5,7 @@ import Layout from '@/components/Layout'
 import {AuthProvider} from '@/components/auth/AuthContext';
 import {ManagedUIContext} from '@/components/UIContext';
 import {ConversationProvider} from '@/components/utils/ConversationContext';
+import {KeyboardHandler} from "@/components/utils/KeyboardHandler";
 
 
 function MyApp({Component, pageProps}: AppProps) {
@@ -15,12 +16,14 @@ function MyApp({Component, pageProps}: AppProps) {
         <ConversationProvider>
             <AuthProvider>
                 <ManagedUIContext>
-                    <Layout>
-                            <Component {...pageProps} />
-                    </Layout>
-                    <div id="portal">
+                    <KeyboardHandler>
+                        <Layout>
+                                <Component {...pageProps} />
+                        </Layout>
+                        <div id="portal">
 
-                    </div>
+                        </div>
+                    </KeyboardHandler>
                 </ManagedUIContext>
             </AuthProvider>
         </ConversationProvider>
