@@ -17,9 +17,10 @@ export default function Footer() {
     const {responseLoading, setResponseStopped, responseStopped} = useConversation()
 
 
+
     const [text, setText] = useState('')
 
-    const {submitMessage} = useConversation();
+    const {submitMessage, activeConversationError, regenerateResponse} = useConversation();
     const textarea = useRef<HTMLTextAreaElement>();
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -42,6 +43,16 @@ export default function Footer() {
 
     }
 
+    let alreadyRegen = false;
+    const handleRegenerateResponse = async () => {
+        if(alreadyRegen) return;
+
+        alreadyRegen = true;
+        regenerateResponse().then(() => {
+            alreadyRegen = false;
+        });
+    }
+
     return (
         <>
 
@@ -50,7 +61,7 @@ export default function Footer() {
 
                     <div className="relative z-10 w-3/5 px-4 py-4">
                         <div className=' relative rounded-lg shadow-md bg-white p-1'>
-                            { !responseLoading &&
+                            { (!responseLoading && !activeConversationError) &&
                                 <>
                                     <TextArea
                                         className="block w-full px-2 py-1 resize-none border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -58,7 +69,7 @@ export default function Footer() {
                                         onChange={handleChange}
                                         value={text}
                                         rows={1}
-                                        maxRows={5}
+                                        maxRows={20}
                                         style={{maxHeight: '200px'}}
                                         refs={textarea}
                                     />
@@ -74,12 +85,23 @@ export default function Footer() {
                                 </>
                             }
 
+                            {(!responseLoading && activeConversationError) && (
+                                <>
+                                    <Button onClick={handleRegenerateResponse} color={'gray'} text={'Regenerate response'} icon={
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                        </svg>
+                                    } iconPosition={'left'}/>
+                                </>
+
+
+                            )}
+
                             { responseLoading &&
                                 <Button color='gray'
                                         customClass="w-full h-full"
                                         onClick={handleStopResponse}
                                         text="Stop Response"
-
                                 />
                             }
                         </div>
