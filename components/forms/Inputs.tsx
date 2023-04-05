@@ -9,11 +9,13 @@ interface InputProps {
   name: string;
   label?: string;
   onChange?: (...args: any) => void;
+  value?: string;
 }
 const Input: React.FC<InputProps> = ({
     type,
     placeholder,
     name,
+    value,
     label,
     color = "blue",
     prefix,
@@ -45,6 +47,7 @@ const Input: React.FC<InputProps> = ({
           </span>
         )}
         <input
+            value = {value}
           onChange={handleInputChange}
           id={name}
           name={name}
