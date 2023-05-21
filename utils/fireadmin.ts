@@ -1,6 +1,19 @@
 const admin = require("firebase-admin");
 
-let serviceAccount = require("/jeepeetee-a520e-firebase-adminsdk-br5r8-3add21f581.json");
+let FIREBASE_ADMIN_SERVICE_ACCOUNT = process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT
+
+if(!FIREBASE_ADMIN_SERVICE_ACCOUNT){
+    throw new Error("FIREBASE_ADMIN_SERVICE_ACCOUNT is missing")
+}else {
+    FIREBASE_ADMIN_SERVICE_ACCOUNT = FIREBASE_ADMIN_SERVICE_ACCOUNT.toString().replaceAll("'", "")
+}
+
+let serviceAccount = JSON.parse(FIREBASE_ADMIN_SERVICE_ACCOUNT)
+
+
+
+
+console.log("serviceAccount", serviceAccount)
 
 const firebaseConfig = {
   credential: admin.credential.cert(serviceAccount)
@@ -10,8 +23,7 @@ const adminApp = !admin.apps.length ? admin.initializeApp(firebaseConfig) : admi
 const adminAuth = adminApp.auth();
 
 const verifyIdToken = async (token: string) => {
-  const decodedToken = await adminAuth.verifyIdToken(token);
-  return decodedToken;
+  return await adminAuth.verifyIdToken(token);
 }
 
 
