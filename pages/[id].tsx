@@ -43,7 +43,7 @@ export default function Chats({children}: {children: ReactNode, trigger:boolean;
         scrollToHashElement();
         window.addEventListener("hashchange", scrollToHashElement);
         return window.removeEventListener("hashchange", scrollToHashElement);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeConversationMessages]);
 
 

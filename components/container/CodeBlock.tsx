@@ -1,8 +1,14 @@
-import {useState} from "react";
+import {ReactNode, useState} from "react";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 
-export default function CodeBlock({children, className, ...props}) {
+interface CodeBlockProps {
+    children: string,
+    className: string
+}
+export default function CodeBlock({...props}) {
     const [copied, setCopied] = useState<boolean>(false)
+
+    const {className, children} = props.children.props as CodeBlockProps;
 
     const getCopiedButtonText = () => {
         return copied ? "Copied" : "Copy"
@@ -44,11 +50,14 @@ export default function CodeBlock({children, className, ...props}) {
             }, 2000)
         })
     }
+    console.log(props)
+
+
 
     let value = children;
-    const language = value.props.className ? value.props.className.replace("lang-", "") : "text"
+    const language = className ? className.toString().replace("lang-", "") : "text"
 
-
+    console.log(value)
 
 
     // @ts-ignore
@@ -59,13 +68,14 @@ export default function CodeBlock({children, className, ...props}) {
                 <div className="flex flex-col shadow-md">
                     <div className="w-full bg-gray-300/40 p-2 flex justify-between rounded-t-md">
                         <span className="text-xs flex items-center">{language}</span>
-                        <button className="text-xs p-1 flex items-center space-x-1" onClick={() => {handleCopy(value.props.children)}}>
+                        <button className="text-xs p-1 flex items-center space-x-1" onClick={() => {handleCopy(value)}}>
                             {getCopiedButtonIcon()}
                             {getCopiedButtonText()}
                         </button>
                     </div>
                     <div className="w-full rounded-b-xl">
-                        <SyntaxHighlighter language={language} children={value.props.children} showLineNumbers={true}>
+                        <SyntaxHighlighter language={language} showLineNumbers={true}>
+                            {value}
                         </SyntaxHighlighter>
                     </div>
                 </div>

@@ -45,11 +45,12 @@ const formatDate = (date: Date) => {
 
         let hours = date.getHours();
         let minutes = date.getMinutes();
+        let minutesStr = '0'
         let ampm = hours >= 12 ? 'pm' : 'am';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutes = minutes < 10 ? '0'+minutes : minutes;
-        var strTime = hours + ':' + minutes + ' ' + ampm;
+        minutesStr = minutes < 10 ? '0'+minutes : minutes.toString();
+        var strTime = hours + ':' + minutesStr + ' ' + ampm;
         return (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
 
 }
@@ -60,8 +61,8 @@ export default function Search() {
     const [open, setOpen] = useState(true)
     const [conversationResults, setConversationResults] = useState<ConversationResult[]>([])
     const [messagesResults, setMessagesResults] = useState<MessageResult[]>([])
-    const [startDate, setStartDate] = useState<string>(null)
-    const [endDate, setEndDate] = useState<string>(null)
+    const [startDate, setStartDate] = useState<string | null>(null)
+    const [endDate, setEndDate] = useState<string | null>(null)
     const [minLength, setMinLength] = useState<number>(Q_LEN)
 
 

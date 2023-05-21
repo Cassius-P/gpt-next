@@ -60,9 +60,11 @@ export default function SidebarItemActions({rename, remove, cancel}: SidebarItem
         setIsConfirmation(false)
         setAction(null)
         if(action === "rename"){
+            // @ts-ignore
             rename?.confirmation?.action(true)
         }
         if(action === "remove"){
+            // @ts-ignore
             remove?.confirmation?.action(true)
         }
     }
@@ -71,9 +73,11 @@ export default function SidebarItemActions({rename, remove, cancel}: SidebarItem
         setIsConfirmation(false)
         setAction(null)
         if(action === "rename"){
+            // @ts-ignore
             rename?.confirmation?.action(false)
         }
         if(action === "remove"){
+            // @ts-ignore
             remove?.confirmation?.action(false)
         }
     }
