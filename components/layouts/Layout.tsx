@@ -55,7 +55,7 @@ const Layout = ({ children }: LayoutProps) => {
 	}, [user, openModal, setModalView])
 
 	return (
-		<div className="bg-gray-100 min-h-screen min-w-screen">
+		<div className="bg-gray-100 dark:bg-gray-700 min-h-screen min-w-screen">
 			<MainFrame>
 				{children}
 			</MainFrame>

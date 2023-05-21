@@ -1,4 +1,4 @@
-import {ReactNode, useState} from "react";
+import {useState} from "react";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 
 interface CodeBlockProps {
@@ -66,15 +66,15 @@ export default function CodeBlock({...props}) {
         <>
             <article className="not-prose p-6">
                 <div className="flex flex-col shadow-md">
-                    <div className="w-full bg-gray-300/40 p-2 flex justify-between rounded-t-md">
+                    <div className="w-full bg-gray-300/40 p-2 flex justify-between rounded-t-md dark:bg-gray-600">
                         <span className="text-xs flex items-center">{language}</span>
                         <button className="text-xs p-1 flex items-center space-x-1" onClick={() => {handleCopy(value)}}>
                             {getCopiedButtonIcon()}
                             {getCopiedButtonText()}
                         </button>
                     </div>
-                    <div className="w-full rounded-b-xl">
-                        <SyntaxHighlighter language={language} showLineNumbers={true}>
+                    <div className="w-full rounded-b-xl dark">
+                        <SyntaxHighlighter language={language} showLineNumbers={true} >
                             {value}
                         </SyntaxHighlighter>
                     </div>

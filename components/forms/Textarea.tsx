@@ -16,7 +16,7 @@ const TextArea: React.FC<CustomTextareaProps> = ({ maxRows = 10, refs, ...props 
     return (
         
             <TextareaAutosize
-                className="overflow-x-hidden block w-full p-1 pr-12 resize-none  focus:outline-none"
+                className="overflow-x-hidden block w-full p-1 pr-12 resize-none  focus:outline-none dark:bg-gray-800 dark:text-white"
                 placeholder="Enter your text here"
                 onChange={props.onChange}
                 value={props.value}

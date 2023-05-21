@@ -78,7 +78,7 @@ export default function ConversationUI({conversation, active}: ConversationUIPro
     }
 
 
-    let activeConv = active ? "bg-blue-400 text-white" : "group-hover:bg-gray-200";
+    let activeConv = active ? "bg-blue-400 text-white" : "group-hover:bg-gray-200 dark:group-hover:bg-gray-600 dark:group-hover:text-white"
 
     return (
 
@@ -97,7 +97,7 @@ export default function ConversationUI({conversation, active}: ConversationUIPro
                             <div className={`whitespace-nowrap text-clip overflow-hidden flex-1 relative`}>
                                 {conversation.data.title}
                                 <div
-                                    className={`absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l  ${active ? 'from-blue-400' : 'from-white group-hover:from-gray-200'} `}></div>
+                                    className={`absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l  ${active ? 'from-blue-400' : 'from-white group-hover:from-gray-600 dark:from-gray-800'} `}></div>
                             </div>
                         </div>
 

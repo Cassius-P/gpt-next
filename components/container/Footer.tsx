@@ -61,16 +61,15 @@ export default function Footer() {
         <>
 
                 <div className="relative flex flex-col items-center justify-center">
-                    <div className={'absolute -top-4 h-4 w-full from-gray-100 bg-gradient-to-t '}>
+                    <div className={'absolute -top-4 h-4 w-full from-gray-100 bg-gradient-to-t dark:from-gray-700'}>
 
                     </div>
 
                     <div className="relative z-10 w-3/5 px-4 py-4">
-                        <div className=' relative rounded-lg shadow-md bg-white p-1'>
+                        <div className=' relative rounded-lg shadow-md bg-white dark:bg-gray-800 p-1'>
                             { (!responseLoading && !activeConversationError) &&
                                 <>
                                     <TextArea
-                                        className="block w-full px-2 py-1 resize-none border border-gray-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         placeholder="Enter your text here"
                                         onChange={handleChange}
                                         value={text}
@@ -80,7 +79,7 @@ export default function Footer() {
                                         refs={textarea}
                                     />
                                     <div className="absolute bottom-3 right-3">
-                                        <Button type="button" onClick={handleButtonClick} customClass="w-10 h-10 aspect-square" color={"white"} icon={
+                                        <Button type="button" onClick={handleButtonClick} customClass="w-10 h-10 aspect-square dark:bg-gray-800" color={"white"} icon={
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                                                  stroke="currentColor" className="w-6 h-6">
                                                 <path strokeLinecap="round" strokeLinejoin="round"

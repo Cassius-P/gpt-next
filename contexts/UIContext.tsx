@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import { createContext, FC, ReactNode } from "react";
 
 export interface UIState {
@@ -21,6 +21,9 @@ type Action =
   | {
     type: "SET_VIEW"
     view: VIEWS
+  } | {
+    type: "TOGGLE_THEME"
+    theme: 'dark' | 'light'
   }
 
 type VIEWS = 
@@ -52,6 +55,13 @@ function uiReducer(state: UIState, action: Action) {
         modalView: action.view
       }
     }
+    case "TOGGLE_THEME": {
+      console.log('TOGGLE_THEME', action.theme)
+      localStorage.setItem('theme', action.theme)
+      return {
+        ...state,
+      }
+    }
   }
 }
 
@@ -75,12 +85,32 @@ export const UIProvider: FC<{ children?: ReactNode }> = (props) => {
     [dispatch]
   )
 
+  let initLightTheme = true
+  if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    initLightTheme = false
+  }
+
+
+  const [lightMode, setLightMode] = useState(initLightTheme);
+
+  const setTheme = useCallback(
+    (theme: 'dark' | 'light') => {
+        console.log('setTheme', theme)
+        dispatch({ type: "TOGGLE_THEME", theme })
+        setLightMode(theme === 'light')
+    }, [dispatch])
+
+
+
+
   const values = useMemo(
     () => ({
       ...state,
       openModal,
       closeModal,
-      setModalView
+      setModalView,
+      setTheme,
+      lightMode,
     }),
     [state]
   )

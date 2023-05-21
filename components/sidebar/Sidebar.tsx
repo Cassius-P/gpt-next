@@ -4,13 +4,14 @@ import ConversationUI from "@/components/sidebar/Conversation";
 import {useAuth} from "@/contexts/AuthContext";
 import Button from "@/components/button/Button";
 import {useUI} from "@/contexts/UIContext";
+import {useEffect, useState} from "react";
 
 
 export default function Sidebar() {
 
     const { conversations, activeConversation, newChat } = useConversation()
     const {signout} = useAuth();
-    const {openModal , setModalView} = useUI();
+    const {openModal , setModalView, setTheme, lightMode } = useUI();
     const handleSignout = () => {
         signout()
     }
@@ -26,13 +27,40 @@ export default function Sidebar() {
         setModalView("SEARCH_VIEW")
     }
 
+
+    const lightIcon = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+    </svg>
+
+    const darkIcon = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+    </svg>
+
+    const [lightTheme, setLightTheme] = useState(lightMode)
+    const [themeIcon, setThemeIcon] = useState<JSX.Element>(lightMode ? lightIcon : darkIcon)
+    const handleTheme = () => {
+        setLightTheme(!lightTheme)
+        setTheme(lightTheme ? 'dark' : 'light')
+
+        console.log('theme',  lightTheme)
+        setThemeIcon( lightTheme ? darkIcon : lightIcon)
+    }
+
+    useEffect(() => {
+        if(lightTheme) {
+            document.documentElement.classList.remove('dark')
+        }else{
+            document.documentElement.classList.add('dark')
+        }
+    }, [lightTheme]);
+
     return (
         <aside className="w-2/12 py-3 pl-3 h-full grid grid-cols-4 gap-2" style={{gridTemplateRows: 'auto 1fr auto'}}>
 
             {/*Search button*/}
             <div className={'bg-white rounded-md shadow-md col-span-1 aspect-[1/1]'}>
                 <Button type={'button'}
-                        customClass={'h-full w-full'}
+                        customClass={'h-full w-full dark:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white'}
                         onClick={handleSearch}
                         color={'white'}
                         icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -42,10 +70,10 @@ export default function Sidebar() {
             </div>
 
             {/*New Chat button*/}
-            <div className={'bg-white rounded-md shadow-md col-span-3'}>
+            <div className={'bg-white dark:bg-gray-500 rounded-md shadow-md col-span-3'}>
                 <Button type={'button'}
                         text={'New Chat'}
-                        customClass={'h-full w-full'}
+                        customClass={'h-full w-full dark:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white'}
                         onClick={handleNewChat}
                         color={'white'}
                         icon={
@@ -56,7 +84,7 @@ export default function Sidebar() {
             </div>
 
             {/*Conversations*/}
-            <div className={'self-stretch flex flex-col bg-white p-2 shadow-md rounded-md col-span-4'} >
+            <div className={'self-stretch flex flex-col bg-white p-2 shadow-md rounded-md col-span-4 dark:bg-gray-800 dark:text-gray-300'} >
                 <div className="grid grow auto-rows-min overflow-y-auto">
 
                     {(!conversations || conversations.length == 0) &&
@@ -84,13 +112,25 @@ export default function Sidebar() {
             {/*Sign out*/}
             <div className="rounded-md shadow-md col-span-1 aspect-[1/1]">
                 <Button type={'button'}
-                        customClass={'h-full w-full'}
+                        customClass={'h-full w-full dark:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white'}
                         onClick={handleSignout}
                         color={'white'}
                         icon={
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
                             </svg>
+                        }/>
+
+            </div>
+
+            {/*Theme*/}
+            <div className="rounded-md shadow-md col-span-1 aspect-[1/1]">
+                <Button type={'button'}
+                        customClass={'h-full w-full dark:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white'}
+                        onClick={handleTheme}
+                        color={'white'}
+                        icon={
+                            themeIcon
                         }/>
 
             </div>

@@ -9,7 +9,7 @@ export default function MessageUI({message}: { message: Message, index?: string 
         classes = 'response text-red-500 border border-red-500 bg-red-500/10'
     }
     if(message?.role == 'assistant'){
-        classes ="response bg-white"
+        classes ="response bg-white dark:bg-gray-800 dark:text-white"
     }
 
 
