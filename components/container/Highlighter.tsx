@@ -1,7 +1,6 @@
-import ReactMarkdown, {Components} from "react-markdown";
+
 import Markdown from 'markdown-to-jsx';
 import CodeBlock from "@/components/container/CodeBlock";
-import {useConversation} from "@/components/utils/ConversationContext";
 
 export default function Highlighter({text, isLoading}: { text: string, isLoading: boolean }) {
 
@@ -9,7 +8,7 @@ export default function Highlighter({text, isLoading}: { text: string, isLoading
 
 
     return (
-        <div className={isLoading ? 'result-loading' : ''}>
+        <div className={`markdown ${isLoading ? 'result-loading' : ''}`}>
             <Markdown options={
                 {
                     disableParsingRawHTML: true ,

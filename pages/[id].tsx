@@ -1,10 +1,7 @@
 import { useConversation } from "@/components/utils/ConversationContext"
 import { Message } from "@/models/Message"
-import {ReactNode, useEffect, useRef, useState} from "react"
-import Highlighter from "@/components/container/Highlighter";
-import MessageUI from "@/components/container/Message";
-import {GetServerSidePropsContext} from "next";
-import { parse } from 'url'
+import {ReactNode, useEffect, useState} from "react"
+import MessageUI from "@/components/container/MessageUI";
 import {useRouter} from "next/router";
 
 
@@ -51,46 +48,17 @@ export default function Chats({children}: {children: ReactNode, trigger:boolean;
 
 
 
-    /*const scrolDown = () => {
-        const container = containerRef.current;
-        if (container) {
-            console.log('container.scrollHeight', container.scrollHeight)
-            console.log('container.clientHeight', container.clientHeight)
-            console.log('container.scrollTop', container.scrollTop)
-            container.scrollTop = container.scrollHeight;
-        }
-    }
-
-    useEffect(() => {
-        const container = containerRef.current;
-        if (container) {
-            console.log('container.scrollHeight', container.scrollHeight)
-            console.log('container.clientHeight', container.clientHeight)
-            console.log('container.scrollTop', container.scrollTop)
-
-            const isAtBottom = container.scrollHeight - container.clientHeight <= (container.scrollTop - 260);
-            console.log('isAtBottom', isAtBottom, "\nisLoading", responseLoading)
-            if (isAtBottom && responseLoading) {
-                scrolDown()
-            }
-        }
-    }, [responseLoading]);
-
-    useEffect(() => {
-        scrolDown()
-    }, [containerRef, activeConversation]);*/
-
-
 
 
     return (
-      <div className="flex flex-col spacing-2 overflow-auto" id="chat-container" >
+      <div className="flex flex-col py-4 overflow-auto relative" id="chat-container" >
         {activeConversationMessages.map((message:Message, index:string) => {
             return (
                 <MessageUI message={message} key={index}/>
             )
         })
         }
+
       </div>
     )
 }

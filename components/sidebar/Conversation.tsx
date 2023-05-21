@@ -11,7 +11,7 @@ interface ConversationUIProps {
 
 export default function ConversationUI({conversation, active}: ConversationUIProps) {
 
-    let activeConv = active ? "bg-gray-300" : "";
+
 
 
     const [isRenaming, setIsRenaming] = useState(false)
@@ -37,6 +37,7 @@ export default function ConversationUI({conversation, active}: ConversationUIPro
 
     useEffect(() => {
         if(input.current){
+            // @ts-ignore
             input.current.focus()
         }
     }, [isRenaming]);
@@ -78,6 +79,8 @@ export default function ConversationUI({conversation, active}: ConversationUIPro
     }
 
 
+    let activeConv = active ? "bg-blue-400 text-white" : "group-hover:bg-gray-200";
+
     return (
 
             <div className="relative flex flex-col overflow-hidden items-center h-12 w-full"
@@ -90,12 +93,12 @@ export default function ConversationUI({conversation, active}: ConversationUIPro
                     <Link href={`/${conversation.id}`} className={"w-full h-full flex items-center overflow-hidden group"}>
 
                         <div className={`w-full pl-4 pr-14 py-2 flex items-center rounded-md 
-                         group-hover:bg-gray-300 ${activeConv}`
+                          ${activeConv}`
                         }>
                             <div className={`whitespace-nowrap text-clip overflow-hidden flex-1 relative`}>
                                 {conversation.data.title}
                                 <div
-                                    className={`absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l  ${active ? 'from-gray-300' : 'from-gray-200'} group-hover:from-gray-300`}></div>
+                                    className={`absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l  ${active ? 'from-blue-400' : 'from-white group-hover:from-gray-200'} `}></div>
                             </div>
                         </div>
 

@@ -20,8 +20,9 @@ const TextArea: React.FC<CustomTextareaProps> = ({ maxRows = 10, refs, ...props 
                 placeholder="Enter your text here"
                 onChange={props.onChange}
                 value={props.value}
-                minRows={1}
+                minRows={props.rows}
                 maxRows={maxRows}
+                onKeyDown={props.onKeyDown}
             />
 
     )

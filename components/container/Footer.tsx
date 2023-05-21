@@ -1,15 +1,10 @@
-import {ChangeEvent, TextareaHTMLAttributes, useEffect, useState, useRef, MutableRefObject} from "react"
-import autosize from 'autosize';
+import {TextareaHTMLAttributes , useState, useRef} from "react"
 import TextArea from "../forms/Textarea";
 import Button from "../button/Button";
-import {ButtonProps} from "flowbite-react";
 import {useConversation} from "../utils/ConversationContext";
-import {textChangeRangeIsUnchanged} from "typescript";
 
 
-interface CustomTextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-    maxRows?: number;
-}
+
 
 export default function Footer() {
 
@@ -53,11 +48,21 @@ export default function Footer() {
         });
     }
 
+    const handleEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        console.log(e.key)
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleButtonClick();
+        }
+    }
+
     return (
         <>
 
-                <div className="relative flex items-center justify-center">
-                    <div className="absolute inset-0 z-0 bg-gray-100 border-t border-gray-200"></div>
+                <div className="relative flex flex-col items-center justify-center">
+                    <div className={'absolute -top-4 h-4 w-full from-gray-100 bg-gradient-to-t '}>
+
+                    </div>
 
                     <div className="relative z-10 w-3/5 px-4 py-4">
                         <div className=' relative rounded-lg shadow-md bg-white p-1'>
@@ -68,13 +73,13 @@ export default function Footer() {
                                         placeholder="Enter your text here"
                                         onChange={handleChange}
                                         value={text}
-                                        rows={1}
-                                        maxRows={20}
-                                        style={{maxHeight: '200px'}}
+                                        rows={2}
+                                        maxRows={10}
+                                        onKeyDown={handleEnterPress}
                                         refs={textarea}
                                     />
-                                    <div className="absolute bottom-3 right-3 h-6 w-6">
-                                        <Button type="button" onClick={handleButtonClick} customClass="w-8 h-8" color={"gray"} icon={
+                                    <div className="absolute bottom-3 right-3">
+                                        <Button type="button" onClick={handleButtonClick} customClass="w-10 h-10 aspect-square" color={"white"} icon={
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}
                                                  stroke="currentColor" className="w-6 h-6">
                                                 <path strokeLinecap="round" strokeLinejoin="round"
@@ -83,6 +88,7 @@ export default function Footer() {
                                         }/>
                                     </div>
                                 </>
+
                             }
 
                             {(!responseLoading && activeConversationError) && (

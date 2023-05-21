@@ -84,7 +84,6 @@
 
 
 /* GRAY */
-/* BLUE */
 .btn-gray {
   @apply bg-gray-500 hover:bg-gray-700 text-white;
 }
@@ -98,5 +97,18 @@
   @apply bg-gray-900;
 }
 .btn-gray:disabled {
+  @apply bg-opacity-50 cursor-not-allowed;
+}
+
+.btn-white {
+  @apply bg-white hover:bg-gray-100 text-gray-500;
+}
+.btn-white:focus {
+  @apply ring-gray-200;
+}
+.btn-white:active {
+  @apply bg-gray-400;
+}
+.btn-white:disabled {
   @apply bg-opacity-50 cursor-not-allowed;
 }

@@ -3,7 +3,7 @@ import styles from './Button.module.css'
 
 type ButtonProps = {
   text?: string;
-  color: 'blue' | 'green' | 'red' | 'yellow' | 'orange' | 'gray' ;
+  color: 'blue' | 'green' | 'red' | 'yellow' | 'orange' | 'gray' | 'white' ;
   type?: 'button' | 'submit' | 'reset';
   icon?: ReactNode;
   iconPosition?: 'left' | 'right';
