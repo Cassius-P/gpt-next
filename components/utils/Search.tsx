@@ -4,7 +4,6 @@ import {FaceFrownIcon, GlobeAmericasIcon} from '@heroicons/react/24/outline'
 import {Combobox, Dialog, Transition} from '@headlessui/react'
 import {useUI} from "@/contexts/UIContext";
 import Link from "next/link";
-import {useRouter} from "next/router";
 
 
 function classNames(...classes:string[]) {
@@ -45,11 +44,10 @@ const formatDate = (date: Date) => {
 
         let hours = date.getHours();
         let minutes = date.getMinutes();
-        let minutesStr = '0'
         let ampm = hours >= 12 ? 'pm' : 'am';
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
-        minutesStr = minutes < 10 ? '0'+minutes : minutes.toString();
+        let minutesStr = minutes < 10 ? '0'+minutes : minutes.toString();
         var strTime = hours + ':' + minutesStr + ' ' + ampm;
         return (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
 
@@ -67,7 +65,6 @@ export default function Search() {
 
 
     const {closeModal} = useUI();
-    const router = useRouter()
 
 
     useEffect(() => {
@@ -254,27 +251,27 @@ export default function Search() {
                         leaveTo="opacity-0 scale-95"
                     >
                         <Dialog.Panel
-                            className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+                            className="mx-auto max-w-xl transform overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
                             <Combobox onChange={(item) => (console.log("OnChange", item))}>
                                 <div className="relative">
                                     <MagnifyingGlassIcon
-                                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400"
+                                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400 dark:text-gray-300"
                                         aria-hidden="true"
                                     />
                                     <Combobox.Input
-                                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm outline-none"
+                                        className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm outline-none dark:text-gray-300 dark:placeholder-gray-300"
                                         placeholder="Search..."
                                         onChange={handleChange}
                                     />
                                 </div>
 
                                 {(query === '' || query.length < minLength) && (
-                                    <div className="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14">
-                                        <GlobeAmericasIcon className="mx-auto h-6 w-6 text-gray-400"
+                                    <div className="border-t border-gray-100 dark:border-gray-600 px-6 py-14 text-center text-sm sm:px-14">
+                                        <GlobeAmericasIcon className="mx-auto h-6 w-6 text-gray-400 dark:text-gray-300"
                                                            aria-hidden="true"/>
-                                        <p className="mt-4 font-semibold text-gray-900">Search for messages and
+                                        <p className="mt-4 font-semibold text-gray-900 dark:text-gray-100">Search for messages and
                                             chat rooms</p>
-                                        <p className="mt-2 text-gray-500">
+                                        <p className="mt-2 text-gray-500 dark:text-gray-400">
                                             Quickly access chat rooms and messages by running a global search.
                                         </p>
                                     </div>
@@ -287,8 +284,8 @@ export default function Search() {
                                     <div className={`flex flex-col space-y-5`}>
                                         {(messagesResults.length > 0) && (
                                             <Combobox.Options static
-                                                              className="max-h-80 scroll-pb-2 scroll-pt-11 space-y-1 overflow-y-auto">
-                                                <h2 className="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900">Messages</h2>
+                                                              className="max-h-80 scroll-pb-2 scroll-pt-11 space-y-2 space-x-1 overflow-y-auto">
+                                                <h2 className="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 dark:bg-gray-700 dark:text-gray-100">Messages</h2>
 
                                                 <li className={`m-0 flex-col flex px-1`}>
                                                     {messagesResults.map((message, index) => (
@@ -297,9 +294,9 @@ export default function Search() {
                                                             <Link  key={index}
                                                                    href={`${message.conversationID}#${message.id}`}
                                                                    scroll={true}
-                                                                  className={` outline-none p-2 text-sm text-gray-800 hover:bg-gray-200 rounded-md h-full w-full whitespace-nowrap text-clip overflow-hidden flex`}
+                                                                  className={` outline-none p-2 text-sm text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md h-full w-full whitespace-nowrap text-clip overflow-hidden flex`}
                                                                   onClick={handleLinkClick}>
-                                                                    <div className={'aspect-square rounded-md p-2 bg-white'}>
+                                                                    <div className={'aspect-square rounded-md p-2 bg-white dark:bg-gray-600'}>
                                                                         <span className={''}>
                                                                             <svg
                                                                                 xmlns="http://www.w3.org/2000/svg"
@@ -313,8 +310,8 @@ export default function Search() {
                                                                         </span>
                                                                     </div>
                                                                     <div className={'flex flex-col flex-grow ml-2'}>
-                                                                        <span className={'text-gray-900 font-semibold'}>{message.date && (formatDate(new Date(message.date)))} - {message.id}</span>
-                                                                        <span className={'text-gray-900'} dangerouslySetInnerHTML={{__html: message.text}}></span>
+                                                                        <span className={'text-gray-900 dark:text-gray-100 font-semibold'}>{message.date && (formatDate(new Date(message.date)))}</span>
+                                                                        <span className={'text-gray-900 dark:text-gray-100'} dangerouslySetInnerHTML={{__html: message.text}}></span>
                                                                     </div>
                                                             </Link>
 
@@ -326,16 +323,16 @@ export default function Search() {
 
                                         {(conversationResults.length > 0) && (
                                             <Combobox.Options static
-                                                              className="max-h-80 scroll-pb-2 scroll-pt-11 space-y-1 overflow-y-auto">
-                                                <h2 className="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900">Chat</h2>
+                                                              className="max-h-80 scroll-pb-2 scroll-pt-11 space-y-2 space-x-1 overflow-y-auto">
+                                                <h2 className="bg-gray-100 px-4 py-2.5 text-xs font-semibold text-gray-900 dark:bg-gray-700 dark:text-gray-100">Chat</h2>
 
                                                 <li className={`m-0 flex-col flex px-1`}>
                                                     {conversationResults.map((conversation, index) => (
 
                                                         <Link key={index} href={conversation.id}
-                                                              className={`p-2 text-sm text-gray-800 hover:bg-gray-200 rounded-md h-full w-full whitespace-nowrap text-clip overflow-hidden flex`}
+                                                              className={`p-2 text-sm text-gray-800 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md h-full w-full whitespace-nowrap text-clip overflow-hidden flex`}
                                                               onClick={handleLinkClick}>
-                                                            <div className={'aspect-square rounded-md p-2 bg-white'}>
+                                                            <div className={'aspect-square rounded-md p-2 bg-white dark:bg-gray-600'}>
                                                                         <span className={''}>
                                                                             <svg
                                                                                 xmlns="http://www.w3.org/2000/svg"
@@ -350,7 +347,7 @@ export default function Search() {
                                                                         </span>
                                                             </div>
                                                             <div className={'flex items-center flex-grow ml-2'}>
-                                                                <span className={'text-gray-900'}> {conversation.title}</span>
+                                                                <span className={'text-gray-900 dark:text-gray-100'}> {conversation.title}</span>
                                                             </div>
                                                         </Link>
                                                     ))}
@@ -365,16 +362,16 @@ export default function Search() {
 
 
                                 {query !== '' && query.length >= minLength && conversationResults.length === 0 && messagesResults.length === 0 && (
-                                    <div className="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14">
+                                    <div className="border-t border-gray-100 dark:border-gray-600 px-6 py-14 text-center text-sm sm:px-14">
                                         <FaceFrownIcon className="mx-auto h-6 w-6 text-gray-400" aria-hidden="true"/>
-                                        <p className="mt-4 font-semibold text-gray-900">No results found</p>
-                                        <p className="mt-2 text-gray-500">We couldn’t find anything with that term.
+                                        <p className="mt-4 font-semibold text-gray-900 dark:text-gray-100">No results found</p>
+                                        <p className="mt-2 text-gray-500 dark:text-gray-300">We couldn’t find anything with that term.
                                             Please try again.</p>
                                     </div>
                                 )}
 
                                 <div
-                                    className="flex flex-wrap items-center bg-gray-50 px-4 py-2.5 text-xs text-gray-700 mt-2">
+                                    className="flex flex-wrap items-center bg-gray-50 dark:bg-gray-600 px-4 py-2.5 text-xs text-gray-700 dark:text-gray-100 mt-2">
                                     Type{' '}
                                     <kbd
                                         className={classNames(
