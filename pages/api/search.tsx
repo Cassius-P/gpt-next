@@ -52,7 +52,7 @@ const GET = async (req: NextApiRequest, res: NextApiResponse) => {
 
 
 
-    if(!q || q == null) {
+    if(!q) {
         res.status(200).json({ conversations: [], messages: [] });
         res.end();
         return;

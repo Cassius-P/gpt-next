@@ -1,6 +1,5 @@
 import {Message} from "@/models/Message";
 import Highlighter from "@/components/message/Highlighter";
-import moment from "moment"
 
 export default function MessageUI({message, index}: { message: Message, index?: string | number }) {
 

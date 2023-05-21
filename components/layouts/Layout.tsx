@@ -1,9 +1,9 @@
 import React from 'react';
 import {useEffect } from 'react'
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '../auth/AuthForm';
 import ConfirmationView from './ConfirmationView';
-import { useUI } from "../../contexts/UIContext";
+import { useUI } from "@/contexts/UIContext";
 import MainFrame from './MainFrame';
 import Modal from './Modal';
 import Search from "@/components/utils/Search";

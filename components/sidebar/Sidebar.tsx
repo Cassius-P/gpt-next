@@ -1,5 +1,5 @@
 import { Conversation } from "@/models/Conversations"
-import { useConversation } from "../../contexts/ConversationContext"
+import { useConversation } from "@/contexts/ConversationContext"
 import ConversationUI from "@/components/sidebar/Conversation";
 import {useAuth} from "@/contexts/AuthContext";
 import Button from "@/components/button/Button";
@@ -63,6 +63,7 @@ export default function Sidebar() {
                         (
                             <div className={'text-gray-400  flex flex-col my-3'}>
                                 <span className={'w-full flex justify-center font-semibold'}>¯\_(シ)_/¯</span>
+                                {/* eslint-disable-next-line react/no-unescaped-entities */}
                                 <span className={'w-full flex justify-center'}>Looks like there's nothing here yet</span>
                             </div>
                         )

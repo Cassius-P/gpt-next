@@ -1,10 +1,9 @@
 import { useState } from "react";
 import Input from "../forms/Inputs";
 import Button from "../button/Button";
-import { useUI } from "../../contexts/UIContext";
+import { useUI } from "@/contexts/UIContext";
 import Image from 'next/image'
-import { useAuth } from "../../contexts/AuthContext";
-import {auth} from "@/utils/firebase"; 
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AuthFormProps {
   isSignIn: boolean;
@@ -45,7 +44,7 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
     }catch(error: any){
       console.error(error)
       setError(error);
-    };
+    }
   };
 
 

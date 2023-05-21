@@ -2,7 +2,6 @@ import { createContext, ReactNode, useState, useContext, useEffect } from "react
 import { useRouter } from "next/router";
 import { Conversation } from "@/models/Conversations";
 import { Message } from "@/models/Message";
-import {createParser, ParsedEvent, ReconnectInterval} from 'eventsource-parser'
 
 
 export const ConversationContext = createContext<any>({});
@@ -23,9 +22,9 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
     useEffect(() => {
         let id = router.query.id;
 
-        if (id == null || id == undefined) {
+        if (id == null) {
             id = '0'
-        };
+        }
 
         //if id is a string[] then id[0] is the id
         if (id instanceof Array) {
@@ -233,7 +232,7 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
                         if(str === "[[DONE]]" || str === "[DONE]") {
                             setResponseLoading(false);
                             break;
-                        };
+                        }
 
                         reply.content += str;
 
@@ -287,7 +286,7 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
 
         if(activeConversationMessages.length < 2) {
             console.log ("No messages to regenerate");
-        };
+        }
         const beforeLastMessage = activeConversationMessages[activeConversationMessages.length - 2];
 
         if(beforeLastMessage == null) return;

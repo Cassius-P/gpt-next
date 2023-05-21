@@ -8,7 +8,7 @@ import {useRouter} from "next/router";
 
 export default function Chats({children}: {children: ReactNode, trigger:boolean;}) {
 
-    const { activeConversationMessages, setActiveConversationError, responseLoading, activeConversation  } = useConversation()
+    const { activeConversationMessages} = useConversation()
 
     const [trigger, setTrigger] = useState(false)
 

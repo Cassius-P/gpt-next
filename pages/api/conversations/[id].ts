@@ -1,22 +1,16 @@
 import { Message } from "@/models/Message";
-import { db } from "@/utils/firebase";
-import {getCollection, tokenize} from "@/utils/firestore";
+import {getCollection, } from "@/utils/firestore";
 import { isUserConnected } from "@/utils/TokenHandler";
 import {
     addDoc,
-    arrayUnion,
     doc,
-    DocumentData,
-    getDoc,
     getDocs,
     orderBy,
     query,
-    setDoc,
     updateDoc,
     where
 } from "firebase/firestore";
 import { NextApiRequest, NextApiResponse } from "next";
-import { OpenAI } from "openai-streams/node";
 
 
 export default function handler (req: NextApiRequest, res: NextApiResponse) {

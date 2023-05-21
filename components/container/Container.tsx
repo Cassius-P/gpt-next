@@ -1,5 +1,4 @@
-import React, {ReactNode, useEffect, useRef} from 'react'
-import { useConversation } from '../../contexts/ConversationContext';
+import React from 'react'
 import Footer from './Footer'
 
 interface ContainerProps {

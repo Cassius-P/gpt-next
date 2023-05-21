@@ -1,4 +1,4 @@
-import { useUI } from "../../contexts/UIContext";
+import { useUI } from "@/contexts/UIContext";
 import ReactPortal from "./ReactPortal";
 import { auth } from "@/utils/firebase";
 import Search from "@/components/utils/Search";
@@ -12,7 +12,7 @@ function Modal({
   children,
   onClose
 }: ModalProps) {
-  const { displayModal, closeModal } = useUI();
+  const { displayModal } = useUI();
 
   const handleInsideClick = (e: React.MouseEvent) => {
     console.log("Auth", auth);
@@ -22,10 +22,8 @@ function Modal({
 
   const isSearch = () => {
     // @ts-ignore
-    if(children.length > 0 && children[3].type === Search) {
-      return true;
-    }
-    return false;
+    return children.length > 0 && children[3].type === Search;
+
   }
 
 

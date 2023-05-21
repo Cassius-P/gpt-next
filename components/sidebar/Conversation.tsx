@@ -14,7 +14,7 @@ export default function ConversationUI({conversation, active}: ConversationUIPro
 
 
     const [isRenaming, setIsRenaming] = useState(false)
-    const [isRemoving, setIsRemoving] = useState(false)
+    //const [isRemoving, setIsRemoving] = useState(false)
     const [cancel, setCancel] = useState(false)
 
 

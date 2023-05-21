@@ -4,11 +4,10 @@ import {FaceFrownIcon, GlobeAmericasIcon} from '@heroicons/react/24/outline'
 import {Combobox, Dialog, Transition} from '@headlessui/react'
 import {useUI} from "@/contexts/UIContext";
 import Link from "next/link";
-import {router} from "next/client";
 import {useRouter} from "next/router";
 
 
-function classNames(...classes) {
+function classNames(...classes:string[]) {
     return classes.filter(Boolean).join(' ')
 }
 
@@ -88,7 +87,7 @@ export default function Search() {
         setOpen(e);
     }
 
-    const handleLinkClick = (e) => {
+    const handleLinkClick = () => {
 
         handleClose(false).then( () => {
             closeModal();
@@ -116,7 +115,7 @@ export default function Search() {
         if (text === null) {
             text = query
         }
-        ;
+
 
         if (text == COMMANDS.MSG || text == COMMANDS.CONV) {
             return;

@@ -1,7 +1,7 @@
-import {TextareaHTMLAttributes , useState, useRef} from "react"
+import {useState, useRef} from "react"
 import TextArea from "../forms/Textarea";
 import Button from "../button/Button";
-import {useConversation} from "../../contexts/ConversationContext";
+import {useConversation} from "@/contexts/ConversationContext";
 
 
 
@@ -33,8 +33,9 @@ export default function Footer() {
         if (t === '') return;
 
         console.log('Message =', t);
-        let me = await submitMessage(t);
-        setText('');
+        submitMessage(t).then(() => {
+            setText('');
+        });
 
     }
 
