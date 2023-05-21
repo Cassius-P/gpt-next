@@ -9,7 +9,7 @@ import {useConversation} from "@/contexts/ConversationContext";
 export default function Footer() {
 
 
-    const {responseLoading, setResponseStopped, responseStopped} = useConversation()
+    const {responseLoading, setResponseStopped} = useConversation()
 
 
 

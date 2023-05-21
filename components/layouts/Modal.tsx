@@ -9,8 +9,7 @@ interface ModalProps {
 }
 
 function Modal({
-  children,
-  onClose
+  children
 }: ModalProps) {
   const { displayModal } = useUI();
 

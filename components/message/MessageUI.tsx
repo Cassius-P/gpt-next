@@ -1,7 +1,7 @@
 import {Message} from "@/models/Message";
 import Highlighter from "@/components/message/Highlighter";
 
-export default function MessageUI({message, index}: { message: Message, index?: string | number }) {
+export default function MessageUI({message}: { message: Message, index?: string | number }) {
 
 
     let classes = 'question bg-blue-400 text-white';
