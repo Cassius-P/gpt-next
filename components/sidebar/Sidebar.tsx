@@ -58,7 +58,7 @@ export default function Sidebar() {
         <aside className="w-2/12 py-3 pl-3 h-full grid grid-cols-4 gap-2" style={{gridTemplateRows: 'auto 1fr auto'}}>
 
             {/*Search button*/}
-            <div className={'bg-white rounded-md shadow-md col-span-1 aspect-[1/1]'}>
+            <div className={'shadow-md col-span-1 aspect-[1/1]'}>
                 <Button type={'button'}
                         customClass={'h-full w-full dark:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white'}
                         onClick={handleSearch}
@@ -70,7 +70,7 @@ export default function Sidebar() {
             </div>
 
             {/*New Chat button*/}
-            <div className={'bg-white dark:bg-gray-500 rounded-md shadow-md col-span-3'}>
+            <div className={'shadow-md col-span-3'}>
                 <Button type={'button'}
                         text={'New Chat'}
                         customClass={'h-full w-full dark:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white'}
