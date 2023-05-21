@@ -34,7 +34,7 @@ const Input: React.FC<InputProps> = ({
     return (
       <div className={`flex flex-col`}>
       {label && (
-        <label htmlFor={name} className="text-base font-md text-gray-700 font-semibold py-2">
+        <label htmlFor={name} className="dark:text-white text-base font-md text-gray-700 font-semibold py-2">
           {label}
         </label>
       )}
@@ -53,7 +53,7 @@ const Input: React.FC<InputProps> = ({
           name={name}
           type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
           placeholder={placeholder}
-          className={`${
+          className={`dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 ${
             prefix ? 'rounded-l-none flex-1' : ''
           } pl-${prefix ? '0' : '2'} p-2 border-gray-300 w-full border focus:border-${color}-500 focus:ring focus:ring-${color}-200 focus:outline-none rounded text-gray-700 ${
             prefix ? 'rounded-r block ' : ''

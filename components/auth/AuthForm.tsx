@@ -76,13 +76,13 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
   return (
     <form onSubmit={handleSubmit}>
       
-            <p tabIndex={0} className="focus:outline-none text-2xl font-extrabold leading-6 text-gray-800">{title}</p>
-            <p tabIndex={0} className="focus:outline-none text-sm mt-4 font-medium leading-none text-gray-500">{subtitle1} 
-              <a className="hover:text-gray-500 focus:text-gray-500 focus:outline-none focus:underline hover:underline text-sm font-medium leading-none  text-gray-800 cursor-pointer" onClick={handleOtherAuth}> {subtitle2}</a>
+            <p tabIndex={0} className="focus:outline-none text-2xl font-extrabold leading-6 text-gray-800 dark:text-white">{title}</p>
+            <p tabIndex={0} className="focus:outline-none text-sm mt-4 font-medium leading-none text-gray-500 dark:text-gray-300">{subtitle1}
+              <a className="hover:text-gray-500 focus:text-gray-500 focus:outline-none focus:underline hover:underline text-sm font-medium leading-none text-gray-800 dark:text-gray-100 cursor-pointer" onClick={handleOtherAuth}> {subtitle2}</a>
               </p>
-            <button type="button" onClick={handleGoogleAuth} aria-label="Continue with google" role="button" className="focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-700 py-3.5 px-4 border rounded-lg border-gray-700 flex items-center w-full mt-10 hover:bg-black/5">
+            <button type="button" onClick={handleGoogleAuth} aria-label="Continue with google" role="button" className="dark:text-white focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-700 py-3.5 px-4 border rounded-lg border-gray-700 flex items-center w-full mt-10 hover:bg-black/5">
               <Image src="https://tuk-cdn.s3.amazonaws.com/can-uploader/sign_in-svg2.svg" alt="google" width={30} height={30}/>
-              <p className="text-base font-medium ml-4 text-gray-700">Continue with Google</p>
+              <p className="text-base font-medium ml-4">Continue with Google</p>
             </button>
             
             <div className="w-full flex items-center justify-between py-5">
@@ -91,10 +91,6 @@ export default function AuthForm({ isSignIn }: AuthFormProps) {
               <hr className="w-full bg-gray-400  " />
             </div>
             <div>
-              {/* <label id="email" className="text-sm font-medium leading-none text-gray-800">
-                Email
-              </label>
-              <input aria-labelledby="email" type="email" className="bg-gray-200 border rounded  text-xs font-medium leading-none text-gray-800 py-3 w-full pl-3 mt-2" /> */}
               <Input onChange={setEmail} type={"email"} name={"Email"} label={"Email"} color={'blue'} placeholder={"exemple@mail.com"}/>
             </div>
             <div className="mt-4 w-full">
