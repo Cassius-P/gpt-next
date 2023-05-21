@@ -1,10 +1,10 @@
 import '@/styles/globals.css';
 import type {AppProps} from 'next/app'
 
-import Layout from '@/components/Layout'
-import {AuthProvider} from '@/components/auth/AuthContext';
-import {ManagedUIContext} from '@/components/UIContext';
-import {ConversationProvider} from '@/components/utils/ConversationContext';
+import Layout from '@/components/layouts/Layout'
+import {AuthProvider} from '@/contexts/AuthContext';
+import {ManagedUIContext} from '@/contexts/UIContext';
+import {ConversationProvider} from '@/contexts/ConversationContext';
 import {KeyboardHandler} from "@/components/utils/KeyboardHandler";
 
 

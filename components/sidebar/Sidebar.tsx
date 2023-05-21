@@ -1,11 +1,9 @@
 import { Conversation } from "@/models/Conversations"
-import Link from "next/link"
-import { useConversation } from "../utils/ConversationContext"
+import { useConversation } from "../../contexts/ConversationContext"
 import ConversationUI from "@/components/sidebar/Conversation";
-import {useAuth} from "@/components/auth/AuthContext";
-import Input from "@/components/forms/Inputs";
+import {useAuth} from "@/contexts/AuthContext";
 import Button from "@/components/button/Button";
-import {useUI} from "@/components/UIContext";
+import {useUI} from "@/contexts/UIContext";
 
 
 export default function Sidebar() {

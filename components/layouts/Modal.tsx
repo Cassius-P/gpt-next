@@ -1,7 +1,4 @@
-
-import {Fragment, useEffect} from 'react';
-import { Combobox, Dialog, Transition } from '@headlessui/react'
-import { useUI } from "../UIContext";
+import { useUI } from "../../contexts/UIContext";
 import ReactPortal from "./ReactPortal";
 import { auth } from "@/utils/firebase";
 import Search from "@/components/utils/Search";
@@ -24,6 +21,7 @@ function Modal({
 
 
   const isSearch = () => {
+    // @ts-ignore
     if(children.length > 0 && children[3].type === Search) {
       return true;
     }

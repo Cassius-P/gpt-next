@@ -1,9 +1,9 @@
 import { useState } from "react";
-import Input from "./forms/Inputs";
-import Button from "./button/Button";
-import { useUI } from "./UIContext";
+import Input from "../forms/Inputs";
+import Button from "../button/Button";
+import { useUI } from "../../contexts/UIContext";
 import Image from 'next/image'
-import { useAuth } from "./auth/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import {auth} from "@/utils/firebase"; 
 
 interface AuthFormProps {

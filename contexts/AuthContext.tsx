@@ -2,7 +2,7 @@ import { createContext, FC, ReactNode, useContext, useEffect, useMemo, useState 
 import { auth, onAuthStateChanged, signOut, signInWithGoogle, connectWithEmailAndPassword, type UserCredential, onIdTokenChanged } from "@/utils/firebase";
 import nookies from 'nookies';
 import { refreshToken } from "firebase-admin/app";
-import {ConversationContext, useConversation} from "@/components/utils/ConversationContext";
+import {ConversationContext, useConversation} from "@/contexts/ConversationContext";
 
 export interface AuthState {
   authUser : UserCredential | null;

@@ -1,7 +1,7 @@
 import {TextareaHTMLAttributes , useState, useRef} from "react"
 import TextArea from "../forms/Textarea";
 import Button from "../button/Button";
-import {useConversation} from "../utils/ConversationContext";
+import {useConversation} from "../../contexts/ConversationContext";
 
 
 

@@ -1,6 +1,6 @@
 import {createContext, ReactNode, useContext, useEffect} from "react";
 import Mousetrap from "mousetrap"
-import {useUI} from "@/components/UIContext";
+import {useUI} from "@/contexts/UIContext";
 
 export const KeyboardContext = createContext<any>({})
 KeyboardContext.displayName = "KeyboardContext";

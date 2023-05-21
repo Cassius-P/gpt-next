@@ -1,16 +1,11 @@
-
-import { useRouter } from 'next/router';
-import { GetServerSideProps, GetStaticProps, InferGetServerSidePropsType, InferGetStaticPropsType } from 'next/types';
 import React from 'react';
-import { ReactNode, useEffect, useState } from 'react'
-import { useAuth } from './auth/AuthContext';
-import AuthForm from './AuthForm';
+import {useEffect } from 'react'
+import { useAuth } from '../../contexts/AuthContext';
+import AuthForm from '../auth/AuthForm';
 import ConfirmationView from './ConfirmationView';
-import Container from './container/Container';
-import Sidebar from './sidebar/Sidebar';
-import { useUI } from "./UIContext";
-import MainFrame from './utils/MainFrame';
-import Modal from './utils/Modal';
+import { useUI } from "../../contexts/UIContext";
+import MainFrame from './MainFrame';
+import Modal from './Modal';
 import Search from "@/components/utils/Search";
 
 

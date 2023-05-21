@@ -4,10 +4,7 @@ import {getCollection, } from "@/utils/firestore";
 import {getDocs, query, where} from "firebase/firestore";
 import {Conversation} from "@/models/Conversations";
 
-
 import algoliasearch from 'algoliasearch/lite';
-import instantsearch from 'instantsearch.js';
-import { searchBox, hits } from 'instantsearch.js/es/widgets';
 
 
 interface MessageResult {
@@ -110,9 +107,9 @@ const GET = async (req: NextApiRequest, res: NextApiResponse) => {
 
             const hitsConversation = resultConversation.hits;
             hitsConversation.forEach((hit) => {
-                //console.log("hit", hit)
                 conversations.push({
                     id: hit.objectID,
+                    // @ts-ignore
                     title: hit?.title
                 })
             });
@@ -136,11 +133,14 @@ const GET = async (req: NextApiRequest, res: NextApiResponse) => {
             const hitsMessage = resultMessage.hits;
             hitsMessage.forEach((hit) => {
 
-                console.log("hit", hit)
+                //TODO Map hit to a type
                 messages.push({
                     id: hit.objectID,
+                    // @ts-ignore
                     conversationID: hit?.conversationID,
+                    // @ts-ignore
                     text: hit?._snippetResult?.content?.value,
+                    // @ts-ignore
                     date: hit?.createdAt
                 })
             });
@@ -150,6 +150,7 @@ const GET = async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(500).json({
             conversations: [],
             message: [],
+            // @ts-ignore
             error: error.message
         });
     }

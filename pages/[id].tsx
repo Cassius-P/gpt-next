@@ -1,7 +1,7 @@
-import { useConversation } from "@/components/utils/ConversationContext"
+import { useConversation } from "@/contexts/ConversationContext"
 import { Message } from "@/models/Message"
 import {ReactNode, useEffect, useState} from "react"
-import MessageUI from "@/components/container/MessageUI";
+import MessageUI from "@/components/message/MessageUI";
 import {useRouter} from "next/router";
 
 
@@ -51,7 +51,7 @@ export default function Chats({children}: {children: ReactNode, trigger:boolean;
 
 
     return (
-      <div className="flex flex-col py-4 overflow-auto relative" id="chat-container" >
+      <>
         {activeConversationMessages.map((message:Message, index:string) => {
             return (
                 <MessageUI message={message} key={index}/>
@@ -59,6 +59,6 @@ export default function Chats({children}: {children: ReactNode, trigger:boolean;
         })
         }
 
-      </div>
+      </>
     )
 }

@@ -1,8 +1,7 @@
 import Link from "next/link";
 import {Conversation} from "@/models/Conversations";
-import React, {Key, useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import SidebarItemActions from "@/components/sidebar/SidebarItemActions";
-import OutsideClickHandler from 'react-outside-click-handler';
 
 interface ConversationUIProps {
     conversation: Conversation,
