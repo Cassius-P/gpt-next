@@ -20,8 +20,6 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
 
     const router = useRouter();
 
-
-
     useEffect(() => {
         let id = router.query.id;
 
@@ -37,21 +35,17 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
         setActiveConversation(id)
         getConversation(id);
     }, [router.query.id])
-
     useEffect(() => {
         getConversations().then((conversations) => {
             setConversations(conversations)
             });
     }, [])
-
-
     useEffect(() => {
         if(activeConversationMessages.length == 0) return;
 
         const lastMessage = activeConversationMessages[activeConversationMessages.length - 1]
         if(lastMessage.role == 'error') setActiveConversationError(true);
     }, [activeConversationMessages])
-
     const getConversations = async () => {
         let res: Response = await fetch('/api/conversations')
         let data = await res.json()
@@ -60,9 +54,6 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
         setConversations(message)
         return message;
     }
-
-
-    
     const getConversation = async (conversationID: string) => {
         if(activeConversation == '0' && conversationID == null || conversationID == undefined) return []
         if(activeConversation == '0' && conversationID == '0') {
@@ -78,7 +69,6 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
 
         return message;
     }
-
     const submitMessage = async (text: string) => {
         let message:Message = {
             id: 'tmp',
@@ -114,13 +104,11 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
             });
         });
     }
-
     const addMessage = (message: Message) => {
         let array = activeConversationMessages;
         array.push(message)
         setActiveConversationMessages(array)
     }
-
     const sendMessage = async (message: Message) => {
         let isReply = false;
         if(message.role == 'assistant') {
@@ -162,9 +150,7 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
 
         return res.message;
     }
-
     const updateMessage = async (message: Message) => {
-
         console.log("Updating message", message)
         const res = await fetch(`/api/conversations/${message.conversationID}/`, {
             method: 'PUT',
@@ -185,11 +171,9 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
         return m.message;
 
     }
-
     const updateLastMessage = (message: Message) => {
         updateMessageWithIndex(message, activeConversationMessages.length - 1)
     }
-
     const updateMessageWithIndex = (message: Message, index: number) => {
         let array = activeConversationMessages;
         array[index] = message;
@@ -197,13 +181,11 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
         let newMessages = [...array]
         setActiveConversationMessages(newMessages)
     }
-
     const addConversation = (conversation: Conversation) => {
         let array = conversations;
         array.push(conversation)
         setConversations(array)
     }
-
     const askResponse = async ({message, messageToRegen=null}: {message: Message, messageToRegen?:Message|null}) => {
 
         let reply:Message = {
@@ -301,7 +283,6 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
 
         return reply;
     }
-
     const regenerateResponse = async () => {
 
         if(activeConversationMessages.length < 2) {
@@ -325,8 +306,6 @@ export const ConversationProvider = ({ children } : {children:ReactNode}) => {
 
 
     }
-
-
     const newChat = async () => {
         await router.push('/');
         setActiveConversation('0');
