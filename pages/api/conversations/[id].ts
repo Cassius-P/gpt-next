@@ -118,6 +118,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 
 
             msg.conversationID = conversationID;
+            //@ts-ignore
             response["conversation"] = {id: conversationID, data:conv}
         }catch (e) {
             console.error("Error creating document: ", e);
@@ -137,6 +138,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 
         msg.id = m.id;
 
+        //@ts-ignore
         response["message"] = msg;
     } catch (e) {
         console.error("Error updating document: ", e);

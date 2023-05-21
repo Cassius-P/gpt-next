@@ -43,13 +43,22 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
   const openaiUrl = "https://api.openai.com/v1/chat/completions";
   const API_KEY = process.env.OPENAI_MAIN_API_KEY;
-  if (!API_KEY) {
+  const MODEL = process.env.OPENAI_MODEL;
+  if (!API_KEY || !MODEL) {
     res.status(500).json({ error: "Internal Error" });
     return;
   }
 
+  let preprompts =[{
+    "role": "system",
+    "content": "When creating tables don't encapsulate the table in quotes."
+    }]
+
+  messages = preprompts.concat(messages)
+  console.log("Messages", messages)
+
   const parameters = {
-    model: 'gpt-3.5-turbo',
+    model: MODEL,
     stream: true,
     messages,
     n : 1,
@@ -108,8 +117,6 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     console.error(error);
     res.status(500).send({ message: "Internal Server Error" });
   }
-
-
 }
 
 async function fetchSSE(
