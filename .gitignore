@@ -41,3 +41,4 @@ next-env.d.ts
 .env
 ./jeepeetee-a520e-firebase-adminsdk-br5r8-3add21f581.json
 /idea
+/.idea/
